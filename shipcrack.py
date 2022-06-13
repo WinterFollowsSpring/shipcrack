@@ -1,32 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}'.format(
-        username='WinterFollowsSpr',
-        password='Z3aGw~Jhjn$H`Mc!e3X6VW{h;(X,`j',
-        hostname='WinterFollowsSpring.mysql.pythonanywhere-services.com',
-        databasename='WinterFollowsSpr$shipcrack'
-)
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+from models import *
 
-class Comment(db.Model):
-    __tablename__ = 'comments'
+from auth import auth
 
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(4069))
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'error'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(id)
+    return User.query.get(int(id))
 
 @app.route('/', methods=['GET', 'POST'])
-def index_page():
+def index():
     if request.method == 'POST':
         comment = Comment(content=request.form['contents'])
         db.session.add(comment)
         db.session.commit()
-        return redirect(url_for('index_page'))
+        return redirect(url_for('index'))
 
     return render_template('ships.html', comments=Comment.query.all())
