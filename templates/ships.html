@@ -4,17 +4,11 @@
 	</head>
 
 	<body>
+		{% for comment in comments %}
 		<div>
-			Dummy item
+			{{ comment }}
 		</div>
-
-		<div>
-			Dummy item 2. This is pretty cool, huh?
-		</div>
-
-		<div>
-			This is the third dummy item. Fantastic!
-		</div>
+		{% endfor %}
 
 		<div>
 			<form action="." method="POST">
