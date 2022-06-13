@@ -11,7 +11,7 @@ comments = []
 @app.route('/', methods=['GET', 'POST'])
 def index_page():
     if request.method == 'POST':
-        comments.append(request.form('contents'))
+        comments.append(request.form['contents'])
         return redirect(url_for('index'))
 
     return render_template('ships.html')
