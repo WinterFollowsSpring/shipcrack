@@ -25,7 +25,7 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    username = db.Column(db.UnicodeText, unique=True)
+    username = db.Column(db.Unicode(length=255), unique=True)
     password = db.Column(db.UnicodeText)
     
     handle = db.Column(db.UnicodeText)
