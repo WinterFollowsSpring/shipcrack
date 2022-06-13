@@ -7,7 +7,7 @@ DB_HOSTNAME = 'WinterFollowsSpring.mysql.pythonanywhere-services.com'
 DB_NAME     = 'WinterFollowsSpr$shipcrack'
 DB_URI = f'mysql+mysqlconnector://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_NAME}'
 
-from . import app
+from shipcrack import app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
