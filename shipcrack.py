@@ -15,7 +15,7 @@ login_manager.login_message_category = 'error'
 login_manager.init_app(app)
 
 @login_manager.user_loader
-def load_user(id)
+def load_user(id):
     return User.query.get(int(id))
 
 @app.route('/', methods=['GET', 'POST'])
