@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-SQLALCHEMY_DATABASE_URRI = 'mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}'.format(
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}'.format(
         username='WinterFollowsSpr',
         password='Z3aGw~Jhjn$H`Mc!e3X6VW{h;(X,`j',
         hostname='WinterFollowsSpring.mysql.pythonanywhere-services.com',
