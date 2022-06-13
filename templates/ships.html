@@ -4,12 +4,6 @@
 	</head>
 
 	<body>
-		{% for comment in comments %}
-		<div>
-			{{ comment.content }}
-		</div>
-		{% endfor %}
-
 		<div>
 			<form action="." method="POST">
 				<textarea name="contents" placeholder="Enter a search"></textarea>

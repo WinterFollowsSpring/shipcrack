@@ -20,10 +20,4 @@ def load_user(id)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        comment = Comment(content=request.form['contents'])
-        db.session.add(comment)
-        db.session.commit()
-        return redirect(url_for('index'))
-
-    return render_template('ships.html', comments=Comment.query.all())
+    return render_template('ships.html', comments=[])
