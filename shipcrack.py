@@ -14,4 +14,4 @@ def index_page():
         comments.append(request.form['contents'])
         return redirect(url_for('index_page'))
 
-    return render_template('ships.html')
+    return render_template('ships.html', comments=comments)
