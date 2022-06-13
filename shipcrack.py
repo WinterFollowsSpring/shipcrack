@@ -12,6 +12,6 @@ comments = []
 def index_page():
     if request.method == 'POST':
         comments.append(request.form['contents'])
-        return redirect(url_for('index'))
+        return redirect(url_for('index_page'))
 
     return render_template('ships.html')
