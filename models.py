@@ -50,33 +50,38 @@ class Fandom(db.Model):
     name = db.Column(db.Unicode(length=255), unique=True)
     desc = db.Column(db.UnicodeText)
 
+    # ships
+
+    # links
+    # likes
+    # tags
+
     children = db.relationship('Fandom', secondary=fandom_child, primaryjoin=id == fandom_child.c.fandom_parent_id,
             secondaryjoin=id == fandom_child.c.fandom_child_id, backref=db.backref('parents'))
 
+character_fandom = db.Table('fandoms',
+        db.Column('fandom_id',    db.Integer, db.ForeignKey('fandoms.id'),    primary_key=True),
+        db.Column('character_id', db.Integer, db.ForeignKey('characters.id'), primary_key=True)
+)
+
+class Character(db.Model):
+    __tablename__ = 'characters'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.UnicodeText)
+    desc = db.Column(db.UnicodeText)
+
+    fandoms = db.relationship('Fandom', secondary=character_fandom, lazy='subquery', 
+            backref=db.backref('characters', lazy=True))
+    # ships
+
+    # links
+    # likes
+    # tags
+
+
 '''
-Suggestion:
- - User
- - Pending_Level (0 = Pending, 1 = Accepted, 2 = Rejected)
- - _item_type (0 = Fandom, 1 = Character, 2 = Ship)
- - _fandom
- - _character
- - _ship
- - _property
- - _value
- - property (@property getter/setter)
- - value (@property getter/setter)
-
-Fandom: (fandoms)
- - Name
- - Desc
- - Links (OtM)
- - Parent Fandoms (MtM)
- - Child Fandoms (MtM)
- - Characters (MtM)
- - Ships (MtM)
- - Tags (MtM)
- - Likes
-
 Character: (characters)
  - Name
  - Desc
@@ -128,4 +133,16 @@ Link: (links)
  - _character, FK, nullable
  - _ship,      FK, nullable
  - item (@property getter/setter)
+
+Suggestion:
+ - User
+ - Pending_Level (0 = Pending, 1 = Accepted, 2 = Rejected)
+ - _item_type (0 = Fandom, 1 = Character, 2 = Ship)
+ - _fandom
+ - _character
+ - _ship
+ - _property
+ - _value
+ - property (@property getter/setter)
+ - value (@property getter/setter)
 '''
