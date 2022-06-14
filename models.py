@@ -50,7 +50,8 @@ class Fandom(db.Model):
     name = db.Column(db.Unicode(length=255), unique=True)
     desc = db.Column(db.UnicodeText)
 
-    children = db.relationship('Fandom', secondary=fandom_child, lazy=True, backref=db.backref('parents', lazy=True))
+    children = db.relationship('Fandom', secondary=fandom_child, primaryjoin=id == fandom_child.c.fandom_parent_id,
+            secondaryjoin=id == fandom_child.c.fandom_child_id, backref=db.backref('parents'))
 
 '''
 Suggestion:
