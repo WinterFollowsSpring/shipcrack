@@ -59,7 +59,7 @@ class Fandom(db.Model):
     children = db.relationship('Fandom', secondary=fandom_child, primaryjoin=id == fandom_child.c.fandom_parent_id,
             secondaryjoin=id == fandom_child.c.fandom_child_id, backref=db.backref('parents'))
 
-character_fandom = db.Table('fandoms',
+character_fandom = db.Table('character_fandom',
         db.Column('fandom_id',    db.Integer, db.ForeignKey('fandoms.id'),    primary_key=True),
         db.Column('character_id', db.Integer, db.ForeignKey('characters.id'), primary_key=True)
 )
