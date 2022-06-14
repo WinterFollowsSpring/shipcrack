@@ -37,6 +37,21 @@ class User(db.Model, UserMixin):
     # Ship Name Votes
     # Suggestions (Pending, Accepted, Rejected)
 
+fandom_child = db.Table('children',
+        db.Column('fandom_parent_id', db.Integer, db.ForeignKey('fandoms.id'), primary_key=True),
+        db.Column('fandom_child_id',  db.Integer, db.ForeignKey('fandoms.id'), primary_key=True)
+)
+
+class Fandom(db.Model):
+    __tablename__ = 'fandoms'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.Unicode(length=255), unique=True)
+    desc = db.Column(db.UnicodeText)
+
+    children = db.relationship('Fandom', secondary=fandom_child, lazy=True, backref=db.backref('parents', lazy=True))
+
 '''
 Suggestion:
  - User
