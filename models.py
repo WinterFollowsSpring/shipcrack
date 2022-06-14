@@ -80,26 +80,34 @@ class Character(db.Model):
     # likes
     # tags
 
+ship_character = db.Table('ship_character',
+        db.Column('character_id', db.Integer, db.ForeignKey('characters.id'), primary_key=True),
+        db.Column('ship_id',      db.Integer, db.ForeignKey('ships.id'),      primary_key=True)
+)
+
+class Ship(db.Model):
+    __tablename__ = 'ships'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    desc = db.Column(db.UnicodeText)
+    platonic = db.Column(db.Boolean)
+
+    characters = db.relationship('Character', secondary=ship_character, lazy='subquery', 
+            backref=db.backref('ships', lazy=True))
+
+    @property
+    def fandoms(self):
+        fandoms = []
+        for character in characters:
+            fandoms.extend(character.fandoms)
+        return list(set(fandoms))
+
+    # tags
+    # links
+    # likes
 
 '''
-Character: (characters)
- - Name
- - Desc
- - Ships (MtM)
- - Fandoms (MtM)
- - Tags (OtM)
- - Links
- - Likes
-
-Ship: (ships)
- - Names (priority queue where priority = number of likes/votes, let users submit suggestions for names)
- - Characters
- - Platonic
- - Desc
- - Tags
- - Links
- - Likes
-
 Ship_Name: (ship_names)
  - Name
  - Votes
