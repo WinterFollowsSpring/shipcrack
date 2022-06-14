@@ -99,7 +99,7 @@ class Ship(db.Model):
     @property
     def fandoms(self):
         fandoms = []
-        for character in characters:
+        for character in self.characters:
             fandoms.extend(character.fandoms)
         return list(set(fandoms))
 
