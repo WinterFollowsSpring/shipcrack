@@ -112,7 +112,8 @@ class Ship(db.Model):
     
     @property
     def sorted_names(self):
-        sorted_list = self.names.copy().sort(reverse=True, key=lambda name : len(name.votes))
+        sorted_list = self.names.copy()
+        sorted_list.sort(reverse=True, key=lambda name : len(name.votes))
         return sorted_list
 
     def __str__(self):
