@@ -1,7 +1,12 @@
-from flask import Blueprint
+from flask import Blueprint, render_template, request
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'Login Form will be here!'
+    if request.method == 'POST':
+        username = request.form['Username']
+        password = request.form['Password']
+        return f'{username}, {password}'
+
+    return render_template('ships.html')
