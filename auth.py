@@ -9,4 +9,4 @@ def login():
         password = request.form['Password']
         return f'{username}, {password}'
 
-    return render_template('ships.html')
+    return render_template('login.html')
