@@ -25,13 +25,12 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    username = db.Column(db.Unicode(length=255), unique=True)
-    password = db.Column(db.UnicodeText)
+    username = db.Column(db.Unicode(length=255), unique=True, nullable=False)
+    password = db.Column(db.UnicodeText, nullable=False)
     
-    handle = db.Column(db.UnicodeText)
-    blurb  = db.Column(db.UnicodeText)
+    blurb  = db.Column(db.UnicodeText, default='')
 
-    permission_level = db.Column(db.Integer)
+    permission_level = db.Column(db.Integer, default=Permission_Level.Standard)
 
     # Likes
     # Ship Name Votes
@@ -47,8 +46,8 @@ class Fandom(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.Unicode(length=255), unique=True)
-    desc = db.Column(db.UnicodeText)
+    name = db.Column(db.Unicode(length=255), unique=True, nullable=False)
+    desc = db.Column(db.UnicodeText, default='')
 
     # ships
 
@@ -69,8 +68,8 @@ class Character(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.UnicodeText)
-    desc = db.Column(db.UnicodeText)
+    name = db.Column(db.UnicodeText, default='')
+    desc = db.Column(db.UnicodeText, default='')
 
     fandoms = db.relationship('Fandom', secondary=character_fandom, lazy='subquery', 
             backref=db.backref('characters', lazy=True))
@@ -91,8 +90,8 @@ class Ship(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # name votes
-    desc = db.Column(db.UnicodeText)
-    platonic = db.Column(db.Boolean)
+    desc = db.Column(db.UnicodeText, default='')
+    platonic = db.Column(db.Boolean, default=False)
 
     characters = db.relationship('Character', secondary=ship_character, lazy='subquery', 
             backref=db.backref('ships', lazy=True))
