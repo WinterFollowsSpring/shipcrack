@@ -9,6 +9,8 @@ from models import *
 
 from auth import auth
 
+app.register_blueprint(auth, url_prefix='/')
+
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'error'
