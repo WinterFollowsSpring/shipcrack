@@ -14,11 +14,16 @@ app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-class Permission_Level:
+class Permission:
     Standard = 0
     Curator  = 1
     Mod      = 2
     Admin    = 3
+
+class Item:
+    Fandom    = 0
+    Character = 1
+    Ship      = 2
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -30,7 +35,7 @@ class User(db.Model, UserMixin):
     
     blurb  = db.Column(db.UnicodeText, default='')
 
-    permission_level = db.Column(db.Integer, default=Permission_Level.Standard)
+    permission_level = db.Column(db.Integer, default=Permission.Standard)
 
     # Likes
     # Ship Name Votes
@@ -103,9 +108,78 @@ class Ship(db.Model):
             fandoms.extend(character.fandoms)
         return list(set(fandoms))
 
+    names = db.relationship('Ship_Name', backref='ship', lazy=True)
+    
+    @property
+    def sorted_names(self):
+        return self.names.sort(key=lambda name : len(name.votes))
+
+    def __str__(self):
+        return f'{self.names}'
+    def __repr__(self):
+        return self.__str__()
+
     # tags
     # links
     # likes
+
+ship_name_votes = db.Table('ship_name_votes',
+        db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True)),
+        db.Column('ship_name_id', db.Integer, db.ForeignKey('ship_names.id'), primary_key=True)
+)
+
+class Ship_Name(db.Model):
+    __tablename__ = 'ship_names'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.UnicodeText, nullable=False, default='')
+
+    votes = db.relationship('User', secondary=ship_name_votes, lazy='subquery',
+            backref=db.backref('ship_name_votes', lazy=True))
+
+'''
+Ship_Name_Votes: (ship_name_votes)
+ - User
+ - Ship_Name
+
+Like: (likes)
+ - User
+ - _item_type (0 Fandom, 1 Character, 2 Ship)
+ - _fandom,    FK, nullable
+ - _character, FK, nullable
+ - _ship,      FK, nullable
+ - item (@property getter/setter)
+
+Tag: (tags)
+ - Name
+ - _item_type (0 Fandom, 1 Character, 2 Ship)
+ - _fandom,    FK, nullable
+ - _character, FK, nullable
+ - _ship,      FK, nullable
+ - item (@property getter/setter)
+
+Link: (links)
+ - Name
+ - URL
+ - _item_type (0 Fandom, 1 Character, 2 Ship)
+ - _fandom,    FK, nullable
+ - _character, FK, nullable
+ - _ship,      FK, nullable
+ - item (@property getter/setter)
+
+Suggestion:
+ - User
+ - Pending_Level (0 = Pending, 1 = Accepted, 2 = Rejected)
+ - _item_type (0 = Fandom, 1 = Character, 2 = Ship)
+ - _fandom
+ - _character
+ - _ship
+ - _property
+ - _value
+ - property (@property getter/setter)
+ - value (@property getter/setter)
+'''
 
 def test_shit():
     castlevania = Fandom(name='Castlevania (Netflix)', desc='A show where some guy fights a vampire god')
@@ -226,50 +300,4 @@ def test_shit():
         print(f' - Fandoms:    {[fandom.name for fandom in ship.fandoms]}')
     input('Check to see if data is correct, and check in DB (enter to continue)')
 
-'''
-Ship_Name: (ship_names)
- - Name
- - Votes
- - Ship
 
-Ship_Name_Votes: (ship_name_votes)
- - User
- - Ship_Name
-
-Like: (likes)
- - User
- - _item_type (0 Fandom, 1 Character, 2 Ship)
- - _fandom,    FK, nullable
- - _character, FK, nullable
- - _ship,      FK, nullable
- - item (@property getter/setter)
-
-Tag: (tags)
- - Name
- - _item_type (0 Fandom, 1 Character, 2 Ship)
- - _fandom,    FK, nullable
- - _character, FK, nullable
- - _ship,      FK, nullable
- - item (@property getter/setter)
-
-Link: (links)
- - Name
- - URL
- - _item_type (0 Fandom, 1 Character, 2 Ship)
- - _fandom,    FK, nullable
- - _character, FK, nullable
- - _ship,      FK, nullable
- - item (@property getter/setter)
-
-Suggestion:
- - User
- - Pending_Level (0 = Pending, 1 = Accepted, 2 = Rejected)
- - _item_type (0 = Fandom, 1 = Character, 2 = Ship)
- - _fandom
- - _character
- - _ship
- - _property
- - _value
- - property (@property getter/setter)
- - value (@property getter/setter)
-'''
