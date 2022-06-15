@@ -135,6 +135,8 @@ class Ship_Name(db.Model):
 
     name = db.Column(db.UnicodeText, nullable=False, default='')
 
+    ship_id = db.Column(db.Integer, db.ForeignKey('ships.id'), nullable=False)
+
     votes = db.relationship('User', secondary=ship_name_votes, lazy='subquery',
             backref=db.backref('ship_name_votes', lazy=True))
 
