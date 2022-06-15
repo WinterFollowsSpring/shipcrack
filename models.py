@@ -124,7 +124,7 @@ class Ship(db.Model):
     # likes
 
 ship_name_votes = db.Table('ship_name_votes',
-        db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True)),
+        db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True),
         db.Column('ship_name_id', db.Integer, db.ForeignKey('ship_names.id'), primary_key=True)
 )
 
