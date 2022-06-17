@@ -376,14 +376,14 @@ class Edit_Suggestion(db.Model):
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
     ship_id      = db.Column(db.Integer, db.ForeignKey('ships.id'))
 
-    type         = db.Column(db.Integer, default=-1)
+    suggestion_type = db.Column(db.Integer, default=-1)
 
     @property
     def item(self):
-        if not self.type:
+        if not self.suggestion_type:
             return None
 
-        match self.type:
+        match self.suggestion_type:
             case Suggestion_Type.Ship:
                 return self.ship
             case Suggestion_Type.Character:
@@ -394,13 +394,13 @@ class Edit_Suggestion(db.Model):
     @item.setter
     def item(self, value):
         if isinstance(value, Ship):
-            self.type = Suggestion_Type.Ship
+            self.suggestion_type = Suggestion_Type.Ship
             self.ship = value
         elif isinstance(value, Character):
-            self.type = Suggestion_Type.Character
+            self.suggestion_type = Suggestion_Type.Character
             self.character = value
         elif isinstance(value, Fandom):
-            self.type = Suggestion_Type.Fandom
+            self.suggestion_type = Suggestion_Type.Fandom
             self.fandom = value
         else:
             raise Exception(f'Unexpected value {value}, expected Ship, Character, or Fandom')
@@ -436,13 +436,13 @@ class Edit_Suggestion(db.Model):
             if not new_tag:
                 new_tag = Tag(name=self.value)
 
-            if self.type == Suggestion_Type.Fandom:
+            if self.suggestion_type == Suggestion_Type.Fandom:
                 new_tag.is_fandom_tag = True
                 new_tag.fandoms.append(self.fandom)
-            if self.type == Suggestion_Type.Character:
+            if self.suggestion_type == Suggestion_Type.Character:
                 new_tag.is_character_tag = True
                 new_tag.characters.append(self.character)
-            if self.type == Suggestion_Type.Ship:
+            if self.suggestion_type == Suggestion_Type.Ship:
                 new_tag.is_ship_tag = True
                 new_tag.ships.append(self.ship)
 
