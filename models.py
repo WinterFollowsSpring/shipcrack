@@ -105,7 +105,7 @@ class Author(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.UnicodeText, nullable=False, unique=True)
+    name = db.Column(db.Unicode(length=255), nullable=False, unique=True)
     company = db.Column(db.Boolean, default=False)
 
 character_fandom = db.Table('character_fandom',
@@ -121,7 +121,7 @@ class Character(db.Model):
     active = db.Column(db.Boolean, default=True)
     suggestion = db.relationship('Suggestion', uselist=False, backref='character', lazy=True)
 
-    name = db.Column(db.UnicodeText, default='', unique=True)
+    name = db.Column(db.Unicode(length=255), default='', unique=True)
     desc = db.Column(db.UnicodeText, default='')
 
     aliases = db.relationship('Character_Alias', backref='character', lazy=True)
@@ -261,7 +261,7 @@ class Tag(db.Model):
     active = db.Column(db.Boolean, default=True)
     suggestion = db.relationship('Suggestion', uselist=False, backref='tag', lazy=True)
 
-    name = db.Column(db.UnicodeText, nullable=False, unique=True)
+    name = db.Column(db.Unicode(length=255), nullable=False, unique=True)
 
     is_fandom_tag    = db.Column(db.Boolean, default=False)
     is_character_tag = db.Column(db.Boolean, default=False)
