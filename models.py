@@ -376,20 +376,15 @@ class Edit_Suggestion(db.Model):
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
     ship_id      = db.Column(db.Integer, db.ForeignKey('ships.id'))
 
-    suggestion_type = db.Column(db.Integer, default=-1)
+    suggestion_type = db.Column(db.Integer, nullable=False)
 
     @property
     def item(self):
-        if not self.suggestion_type:
-            return None
-
-        match str(self.suggestion_type):
-            case str(Suggestion_Type.Ship):
-                return self.ship
-            case str(Suggestion_Type.Character):
-                return self.character
-            case str(Suggestion_Type.Fandom):
-                return self.fandom
+        if self.suggestion_type == Suggestion_Type.Ship:
+            return self.ship
+        if self.suggestion_type == Suggestion_Type.Character:
+            return self.character
+        return self.fandom
 
     @item.setter
     def item(self, value):
