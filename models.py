@@ -376,6 +376,8 @@ class Edit_Suggestion(db.Model):
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
     ship_id      = db.Column(db.Integer, db.ForeignKey('ships.id'))
 
+    type         = db.Column(db.Integer, default=-1)
+
     @property
     def item(self):
         if not self.type:
