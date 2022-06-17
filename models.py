@@ -601,13 +601,16 @@ class Edit_Suggestion(db.Model):
         return True
 
 def tests():
+    db.drop_all()
+    db.create_all()
+
     print('Creating Users...')
-    user_a  = User(username='user_a',  password='password', blurb='test')
-    user_b  = User(username='user_b',  password='password', blurb='test')
-    user_c  = User(username='user_c',  password='password', blurb='test')
-    curator = User(username='curator', password='password', blurb='test', permission_level=Permission.Curator)
-    mod     = User(username='mod',     password='password', blurb='test', permission_level=Permission.Mod)
-    admin   = User(username='admin',   password='password', blurb='test', permission_level=Permission.Admin)
+    user_a  = User(username='user_a',  password='password1', blurb='test1')
+    user_b  = User(username='user_b',  password='password2', blurb='test2')
+    user_c  = User(username='user_c',  password='password3', blurb='test3')
+    curator = User(username='curator', password='password4', blurb='test4', permission_level=Permission.Curator)
+    mod     = User(username='mod',     password='password5', blurb='test5', permission_level=Permission.Mod)
+    admin   = User(username='admin',   password='password6', blurb='test6', permission_level=Permission.Admin)
 
     print('Adding Users...')
     db.session.add(user_a)
@@ -619,6 +622,27 @@ def tests():
 
     print('Committing Users...')
     db.session.commit()
+
+    print('Testing Users...')
+    usernames = ['user_a', 'user_b', 'user_c', 'curator', 'mod', 'admin']
+    passwords = ['password1', 'password2', 'password3', 'password4', 'password5', 'password6']
+    blurbs = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6']
+    permission_levels = [Permission.Standard, 
+                            Permission.Standard, 
+                            Permission.Standard, 
+                            Permission.Curator, 
+                            Permission.Mod, 
+                            Permission.Admin]
+    users = User.query.all()
+    queried_usernames = [user.username for user in users]
+    assert len(users) == 6, 'Incorrect number of users saved'
+    assert all(username in queried_usernames for username in usernames), 'Failed to find all expected usernames. Expected: {usernames}, Got: {queried_usernames}'
+    for user in users:
+        i = usernames.index(user.username)
+        assert user.password         == passwords[i], f'"{user.password}" should be "{passwords[i]}"'
+        assert user.blurb            == blurbs[i],    f'"{user.blurb}" should be "{blurbs[i]}"'
+        assert user.permission_level == permission_levels[i], f'"{user.permission_level}" should be "{permission_levels[i]}"'
+    print('PASSED BASIC USER CHECKS\n')
 
     print('Creating Fandoms...')
     sci_fi      = Fandom(name='Science Fiction',            desc='Speculative fiction, generally about the future')
@@ -675,6 +699,9 @@ def tests():
 
     print('Committing Fandoms...')
     db.session.commit()
+
+    print('Testing Fandoms...')
+    print('INCOMPLETE')
 
     # sci_fi
     # star_wars
