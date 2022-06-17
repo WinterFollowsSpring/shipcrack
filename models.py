@@ -383,12 +383,12 @@ class Edit_Suggestion(db.Model):
         if not self.suggestion_type:
             return None
 
-        match self.suggestion_type:
-            case Suggestion_Type.Ship:
+        match str(self.suggestion_type):
+            case str(Suggestion_Type.Ship):
                 return self.ship
-            case Suggestion_Type.Character:
+            case str(Suggestion_Type.Character):
                 return self.character
-            case Suggestion_Type.Fandom:
+            case str(Suggestion_Type.Fandom):
                 return self.fandom
 
     @item.setter
