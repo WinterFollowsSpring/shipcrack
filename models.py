@@ -140,7 +140,7 @@ class Character_Alias(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.UnicodeText, nullable=False)
-    character_id = db.Column(db.Integer, db.ForeignKey('Character'), nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
 
 ship_character = db.Table('ship_character',
         db.Column('character_id', db.Integer, db.ForeignKey('characters.id'), primary_key=True),
@@ -314,11 +314,11 @@ class Suggestion(db.Model):
 
     reason = db.Column(db.UnicodeText, nullable=False)
 
-    user_id      = db.Column(db.Integer, db.ForeignKey('User'), nullable=False)
-    tag_id       = db.Column(db.Integer, db.ForeignKey('Tag'))
-    fandom_id    = db.Column(db.Integer, db.ForeignKey('Fandom'))
-    character_id = db.Column(db.Integer, db.ForeignKey('Character'))
-    ship_id      = db.Column(db.Integer, db.ForeignKey('Ship'))
+    user_id      = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    tag_id       = db.Column(db.Integer, db.ForeignKey('tags.id'))
+    fandom_id    = db.Column(db.Integer, db.ForeignKey('fandoms.id'))
+    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    ship_id      = db.Column(db.Integer, db.ForeignKey('ships.id'))
 
     state      = db.Column(db.Integer, default=Suggestion_State.Pending)
     comment    = db.Column(db.UnicodeText)
