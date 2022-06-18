@@ -745,9 +745,11 @@ def tests():
         # TODO check authors
         expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
         assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
-        queried_author_names = [author.name for author in fandom.authors]
-        assert all(author.name in queried_author_names for author in expected_author_names), f'Unexpected authors, Got: {queried_author_names}, Expected: {expected_author_names}'
-        # TODO Rest author company bools check
+        for author in fandom.authors:
+            j = fandom_author_names.index(author.name)
+            assert author.company == (fandom_author_company_bools[j] is True), 
+                f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
+                ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
         # TODO hierarchy
         # TODO likes
         # TODO tags
