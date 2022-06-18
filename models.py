@@ -40,6 +40,9 @@ class User(db.Model, UserMixin):
     edit_suggestions = db.relationship('Edit_Suggestion', backref='user', lazy=True)
     suggestions      = db.relationship('Suggestion', backref='user', lazy=True)
 
+    def __eq__(self, other):
+        return self.id == other.id
+
 fandom_likes = db.Table('fandom_likes',
         db.Column('fandom_id', db.Integer, db.ForeignKey('fandoms.id'), primary_key=True),
         db.Column('user_id',   db.Integer, db.ForeignKey('users.id'),   primary_key=True)
@@ -100,6 +103,9 @@ class Fandom(db.Model):
             descendents.extend(child.descendents)
         return list(set(descendents))
 
+    def __eq__(self, other):
+        return self.id == other.id
+
 class Author(db.Model):
     __tablename__ = 'authors'
 
@@ -107,6 +113,9 @@ class Author(db.Model):
 
     name = db.Column(db.Unicode(length=255), nullable=False, unique=True)
     company = db.Column(db.Boolean, default=False)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 character_fandom = db.Table('character_fandom',
         db.Column('fandom_id',    db.Integer, db.ForeignKey('fandoms.id'),    primary_key=True),
@@ -133,6 +142,9 @@ class Character(db.Model):
             backref=db.backref('character_likes', lazy=True))
 
     edit_suggestions = db.relationship('Edit_Suggestion', backref='character', lazy=True)
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 class Character_Alias(db.Model):
     __tablename__ = 'aliases'
@@ -141,6 +153,9 @@ class Character_Alias(db.Model):
 
     name = db.Column(db.UnicodeText, nullable=False)
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 ship_character = db.Table('ship_character',
         db.Column('character_id', db.Integer, db.ForeignKey('characters.id'), primary_key=True),
@@ -160,6 +175,9 @@ class PlatonicPair(db.Model):
 
     characters = db.relationship('Character', secondary=platonic_pair_characters, lazy='subquery', 
             backref=db.backref('platonic_pairs', lazy=True))
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 class Ship(db.Model):
     __tablename__ = 'ships'
@@ -220,6 +238,9 @@ class Ship(db.Model):
         return [name.name for name in self.names]
 
     likes = db.relationship('User', secondary=ship_likes, lazy='subquery', backref=db.backref('ship_likes', lazy=True))
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 ship_name_votes = db.Table('ship_name_votes',
         db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True),
@@ -237,6 +258,9 @@ class Ship_Name(db.Model):
 
     votes = db.relationship('User', secondary=ship_name_votes, lazy='subquery',
             backref=db.backref('ship_name_votes', lazy=True))
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 fandom_tags = db.Table('fandom_tags',
         db.Column('fandom_id', db.Integer, db.ForeignKey('fandoms.id'), primary_key=True),
@@ -272,6 +296,9 @@ class Tag(db.Model):
     characters = db.relationship('Character', secondary=character_tags, lazy='subquery', 
             backref=db.backref('tags', lazy=True))
     ships = db.relationship('Ship', secondary=ship_tags, lazy='subquery', backref=db.backref('tags', lazy=True))
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 class Suggestion_State:
     Pending  = 0
@@ -311,6 +338,9 @@ class Suggestion(db.Model):
     __tablename__ = 'suggestions'
 
     id = db.Column(db.Integer, primary_key=True)
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
     reason = db.Column(db.UnicodeText, nullable=False)
 
@@ -363,6 +393,9 @@ class Edit_Suggestion(db.Model):
     __tablename__ = 'edit_suggestions'
 
     id = db.Column(db.Integer, primary_key=True)
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
     reason = db.Column(db.UnicodeText, nullable=False)
     value  = db.Column(db.UnicodeText, nullable=False)
@@ -450,9 +483,6 @@ class Edit_Suggestion(db.Model):
                 tag = self.item.tags[i]
                 if tag.name == self.value:
                     self.item.tags.pop(i)
-                    tag.is_ship_tag      = len(tag.ships) > 0
-                    tag.is_character_tag = len(tag.characters) > 0
-                    tag.is_fandom_tag    = len(tag.fandoms) > 0
                     break
 
         # ship specific (add name)
@@ -601,7 +631,9 @@ class Edit_Suggestion(db.Model):
         return True
 
 def tests():
+    print('Dropping All Tables...')
     db.drop_all()
+    print('Creating All Tables...')
     db.create_all()
 
     print('Creating Users...')
@@ -644,72 +676,60 @@ def tests():
         assert user.permission_level == permission_levels[i], f'"{user.permission_level}" should be "{permission_levels[i]}"'
     print('PASSED BASIC USER CHECKS\n')
 
+    print('Creating Tags...')
+    tag_names = ['Gay', 'Cute', 'Jedi', 'Spicy Noodles', 'Pink']
+    tags = [Tag(name=tag_names[i]) for i in range(len(tag_names))]
+
+    print('Adding Tags...')
+    for tag in tags:
+        db.session.add(tag)
+
+    print('Committing Tags...')
+    db.session.commit()
+
+    print('Testing Tags...')
+    tags = Tag.query.all()
+    assert len(tags) == len(tag_names), 'Incorrect number of tags {len(tags)}, should be {len(tag_names)}'
+    queried_tag_names = [tag.name for tag in tags]
+    assert all(tag_name in queried_tag_names for tag_name in tag_names), 'Incorrect tag names, Expected: {tag_names}, Got: {queried_tag_names}'
+    print('PASSED BASIC TAG CHECKS\n')
+
     print('Creating Fandoms...')
-    sci_fi      = Fandom(name='Science Fiction',            desc='Speculative fiction, generally about the future')
-    star_wars   = Fandom(name='Star Wars',                  desc='A long time ago in a galaxy far, far away...')
-    clone_wars  = Fandom(name='Star Wars: The Clone Wars',  desc='A CG animated star wars show set in clone wars era')
-    prequels    = Fandom(name='Star Wars Prequels',         desc='Episodes I, II, and III of Star Wars')
-    fantasy     = Fandom(name='Fantasy',                    desc='Mystical/supernatural/magical speculative fiction')
-    castlevania = Fandom(name='Castlevania (Netflix)',      desc='A netflix show based on the famous video game series')
-    animated    = Fandom(name='Animated Shows',             desc='Animated Shows, computer animated or traditional')
-    atla        = Fandom(name='Avatar: The Last Airbender', desc='Really fun kids show about war and genocide')
+    fandom_names = [f'test fandom {i}' for i in range(10)]
+    fandom_descs = [f'test fandom desc {i}' for i in range(10)]
+    fandoms = [Fandom(name=fandom_names[i], desc=fandom_descs[i]) for i in range(10)]
 
     print('Adding Fandoms...')
-    db.session.add(sci_fi)
-    db.session.add(star_wars)
-    db.session.add(clone_wars)
-    db.session.add(prequels)
-    db.session.add(fantasy)
-    db.session.add(castlevania)
-    db.session.add(animated)
-    db.session.add(atla)
+    for fandom in fandoms:
+        db.session.add(fandom)
 
-    print('Creating Fandom Authors...')
-    disney      = Author(name='Disney', company=True)
-    netflix     = Author(name='Netflix', company=True)
-    project51   = Author(name='Project51', company=True)
-    shankar     = Author(name='Shankar Animation', company=True)
-    frederator  = Author(name='Frederator Studios', company=True)
-    lucasfilm   = Author(name='Lucasfilm', company=True)
-    nickelodeon = Author(name='Nickelodeon', company=True)
-    michael     = Author(name='Michael Dante DiMartino')
-    bryan       = Author(name='Bryan Konietzko')
-    lucas       = Author(name='George Lucas')
-    ellis       = Author(name='Warren Ellis')
-
-    print('Adding authors to fandoms...')
-    star_wars.authors.extend([lucas, lucasfilm, disney])
-    clone_wars.authors.extend([lucas, lucasfilm, disney])
-    prequels.authors.extend([lucas, lucasfilm, disney])
-    castlevania.authors.extend([ellis, frederator, shankar, project51, netflix])
-    atla.authors.extend([nickelodeon, bryan, michael])
+    fandom_author_names = [f'test author {i}' for i in range(30)]
+    fandom_author_company_bools = [*(True for i in range(10)), *(False for i in range(10)), *(None for i in range(10))]
+    fandom_author_map = [(i, i + 10, i + 20) for i in range(10)]
+    fandom_authors = [(Author(name=fandom_author_name[i], company=fandom_author_company_bools[i]) if fandom_author_company_bools[i] is not None else Author(name=fandom_author_name[i])) for i in range(30)]
+    
+    print('Adding Authors to Fandoms...')
+    for i in range(10):
+        fandoms[i].authors.extend([fandom_authors[fandom_author_map[i][j]] for j in range(3)])
 
     print('Creating Fandom Hierarchy...')
-    sci_fi.children.append(star_wars)
-    star_wars.children.extend([clone_wars, prequels])
-    atla.parents.extend([fantasy, animated])
-    fantasy.children.append(castlevania)
-    castlevania.parents.append(animated)
+    for i in range(3):
+        fandoms[i].children.extend([fandoms[i * 2 + 1], fandoms[i * 2 + 2]])
+    fandoms[7].parents.extend([fandoms[1], fandoms[2]])
+    fandoms[8].parents.append(fandoms[7])
+    fandoms[9].children.append(fandoms[6])
 
     print('Liking Fandoms...')
-    star_wars.likes.append(user_a)
-    castlevania.likes.extend([user_b, user_c, curator])
-    admin.fandom_likes.append(atla)
-    mod.fandom_likes.extend([prequels, clone_wars])
+    # TODO
+    
+    print('Adding Tags to Fandoms...')
+    # TODO
 
     print('Committing Fandoms...')
     db.session.commit()
 
     print('Testing Fandoms...')
+    # TODO
+
     print('INCOMPLETE')
-
-    # sci_fi
-    # star_wars
-    # clone_wars
-    # prequels
-    # fantasy
-    # castlevania
-    # animated
-    # atla
-
 
