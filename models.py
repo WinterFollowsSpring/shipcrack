@@ -747,7 +747,7 @@ def tests():
         assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
         for author in fandom.authors:
             j = fandom_author_names.index(author.name)
-            assert author.company == (fandom_author_company_bools[j] is True), 
+            assert author.company == (fandom_author_company_bools[j] is True), \
                 f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
                 ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
         # TODO hierarchy
