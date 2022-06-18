@@ -720,15 +720,38 @@ def tests():
     fandoms[9].children.append(fandoms[6])
 
     print('Liking Fandoms...')
-    # TODO
+    for i in range(3):
+        for j in range(2 + i):
+            fandoms[i].likes.append(users[j])
     
     print('Adding Tags to Fandoms...')
-    # TODO
+    for i in range(2, 4):
+        for j in range(i + 2):
+            fandoms[i].tags.append(tag[j])
 
     print('Committing Fandoms...')
     db.session.commit()
 
     print('Testing Fandoms...')
+    fandoms = Fandom.query.all()
+    assert len(fandoms) == len(fandom_names), f'Incorrect number of fandoms, expected {len(fandom_names)}, got {len(fandoms)}'
+    queried_fandom_names = [fandom.name for fandom in fandoms]
+    assert all(fandom in queried_fandom_names for fandom in fandoms), f'Incorrrect fandom names, expected: {fandom_names}, got: {queried_fandom_names}'
+
+    for fandom in fandoms:
+        i = fandom_names.index(fandom.name)
+        # TODO check descs
+        assert fandom.desc == fandom_descs[i], f'Incorrect Fandom Desc, expected: {fandom_descs[i]}, got: {fandom.desc}'
+        # TODO check authors
+        expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
+        assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
+        queried_author_names = [author.name for author in fandom.authors]
+        assert all(author.name in queried_author_names for author in expected_author_names), f'Unexpected authors, Got: {queried_author_names}, Expected: {expected_author_names}'
+        # TODO Rest author company bools check
+        # TODO hierarchy
+        # TODO likes
+        # TODO tags
+
     # TODO
 
     print('INCOMPLETE')
