@@ -706,7 +706,7 @@ def tests():
     fandom_author_names = [f'test author {i}' for i in range(30)]
     fandom_author_company_bools = [*(True for i in range(10)), *(False for i in range(10)), *(None for i in range(10))]
     fandom_author_map = [(i, i + 10, i + 20) for i in range(10)]
-    fandom_authors = [(Author(name=fandom_author_name[i], company=fandom_author_company_bools[i]) if fandom_author_company_bools[i] is not None else Author(name=fandom_author_name[i])) for i in range(30)]
+    fandom_authors = [(Author(name=fandom_author_names[i], company=fandom_author_company_bools[i]) if fandom_author_company_bools[i] is not None else Author(name=fandom_author_names[i])) for i in range(30)]
     
     print('Adding Authors to Fandoms...')
     for i in range(10):
