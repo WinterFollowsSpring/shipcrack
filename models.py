@@ -725,6 +725,18 @@ def tests():
             ((7,), ()),        # 8
             ((), (6,))         # 9
     ]
+    fandom_meta_hierarchy = [
+            ((), (1, 2, 3, 4, 5, 6, 7, 8)), # 0
+            ((0,), (3, 4, 7, 8)),           # 1
+            ((0,), (8, 7, 5, 6)),           # 2
+            ((1, 0), ()),                   # 3
+            ((1, 0), ()),                   # 4
+            ((2, 0), ()),                   # 5
+            ((2, 0, 9), ()),                # 6
+            ((1, 2, 0), (8,)),              # 7
+            ((7, 1, 2, 0), ()),             # 8
+            ((), (6,))                      # 9
+    ]
     for i in range(3):
         fandoms[i].children.extend([fandoms[i * 2 + 1], fandoms[i * 2 + 2]])
     fandoms[7].parents.extend([fandoms[1], fandoms[2]])
@@ -776,6 +788,15 @@ def tests():
             j = fandom_names.index(child.name)
             assert j in children, f'Invalid child "{child.name}" for fandom "{fandom.name}"'
 
+        ancestors, descendents = fandom_meta_hierarchy[i]
+        assert len(ancestors)   == len(fandom.ancestors),   f'Incorrect # of ancestors, Expected: {len(ancestors)}, Got: {len(fandom.ancestors)}'
+        assert len(descendents) == len(fandom.descendents), f'Incorrect # of descendents, Expected: {len(descendents)}, Got: {len(fandom.descendents)}'
+        for ancestor   in fandom.ancestors:
+            j = fandom_names.index(ancestor.name)
+            assert j in ancestors,   f'Invalid ancestor "{ancestor.name}" for fandom "{fandom.name}"'
+        for descendent in fandom.descendents:
+            j = fandom_names.index(descendent.name)
+            assert j in descendents, f'Invalid descendent "{descendent.name}" for fandom "{fandom.name}"'
         # TODO ancestors and descendents
         # TODO likes
         # TODO tags
