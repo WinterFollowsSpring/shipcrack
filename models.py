@@ -736,7 +736,7 @@ def tests():
     fandoms = Fandom.query.all()
     assert len(fandoms) == len(fandom_names), f'Incorrect number of fandoms, expected {len(fandom_names)}, got {len(fandoms)}'
     queried_fandom_names = [fandom.name for fandom in fandoms]
-    assert all(fandom in queried_fandom_names for fandom in fandoms), f'Incorrrect fandom names, expected: {fandom_names}, got: {queried_fandom_names}'
+    assert all(fandom.name in queried_fandom_names for fandom in fandoms), f'Incorrrect fandom names, expected: {fandom_names}, got: {queried_fandom_names}'
 
     for fandom in fandoms:
         i = fandom_names.index(fandom.name)
