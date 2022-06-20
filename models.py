@@ -713,6 +713,18 @@ def tests():
         fandoms[i].authors.extend([fandom_authors[fandom_author_map[i][j]] for j in range(3)])
 
     print('Creating Fandom Hierarchy...')
+    fandom_hierarchy = [
+            ((),   (1, 2)),    # 0
+            ((0,), (3, 4, 7)), # 1
+            ((0,), (7, 5, 6)), # 2
+            ((1,), ()),        # 3
+            ((1,), ()),        # 4
+            ((2,), ()),        # 5
+            ((2, 9), ()),      # 6
+            ((1, 2), (8,)),    # 7
+            ((7,), ()),        # 8
+            ((), (6,))         # 9
+    ]
     for i in range(3):
         fandoms[i].children.extend([fandoms[i * 2 + 1], fandoms[i * 2 + 2]])
     fandoms[7].parents.extend([fandoms[1], fandoms[2]])
@@ -740,9 +752,11 @@ def tests():
 
     for fandom in fandoms:
         i = fandom_names.index(fandom.name)
-        # TODO check descs
+        
+        # descs
         assert fandom.desc == fandom_descs[i], f'Incorrect Fandom Desc, expected: {fandom_descs[i]}, got: {fandom.desc}'
-        # TODO check authors
+        
+        # authors
         expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
         assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
         for author in fandom.authors:
@@ -750,7 +764,19 @@ def tests():
             assert author.company == (fandom_author_company_bools[j] is True), \
                 f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
                 ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
-        # TODO hierarchy
+
+        # hierarchy
+        parents, children = fandom_hierarchy[i]
+        assert len(parents) == len(fandom.parents), f'Incorrect number of parents for fandom "{fandom.name}", expected {len(parents)}, got {len(fandom.parents)}'
+        for parent in fandom.parents:
+            j = fandom_names.index(parent.name)
+            assert j in parents, f'Invalid parent "{parent.name}" for fandom "{fandom.name}"'
+        assert len(children) == len(fandom.children), f'Incorrect number of children for fandom "{fandom.name}", expected {len(children)}, got {len(fandom.children)}'
+        for child in fandom.children:
+            j = fandom_names.index(child.name)
+            assert j in children, f'Invalid child "{child.name}" for fandom "{fandom.name}"'
+
+        # TODO ancestors and descendents
         # TODO likes
         # TODO tags
 
