@@ -94,14 +94,24 @@ class Fandom(db.Model):
         ancestors = self.parents.copy()
         for parent in self.parents:
             ancestors.extend(parent.ancestors)
-        return list(set(ancestors))
+
+        unique_ancestors = []
+        for ancestor in ancestors:
+            if ancestor.id not in [unique_ancestor.id for unique_ancestor in unique_ancestors]:
+                unique_ancestors.append(ancestor)
+        return unique_ancestors
 
     @property
     def descendents(self):
         descendents = self.children.copy()
         for child in self.children:
             descendents.extend(child.descendents)
-        return list(set(descendents))
+
+        unique_descendents = []
+        for descendent in descendents:
+            if descendent.id not in [unique_descendent.id for unique_descendent in unique_descendents]:
+                unique_descendents.append(descendent)
+        return unique_descendents
 
     def __eq__(self, other):
         return self.id == other.id
