@@ -727,7 +727,7 @@ def tests():
     print('Adding Tags to Fandoms...')
     for i in range(2, 4):
         for j in range(i + 2):
-            fandoms[i].tags.append(tag[j])
+            fandoms[i].tags.append(tags[j])
 
     print('Committing Fandoms...')
     db.session.commit()
