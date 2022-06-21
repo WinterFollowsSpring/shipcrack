@@ -262,7 +262,7 @@ class Ship(db.Model):
         return self.id == other.id
 
     @property
-    def identity(self):0
+    def identity(self):
         character_ids = frozenset([character.id for character in self.characters])
         # self.platonic
         platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) for pair in self.platonic_pairs])
