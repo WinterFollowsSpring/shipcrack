@@ -941,8 +941,8 @@ def tests():
     assert ship_a.identity == ship_b.identity, 'Identity is not working with just two characters'
 
     # More than 2 characters
-    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]])
-    ship_b = Ship(desc='ship_b desc', characters=[characters[3], characters[1], characters[0], characters[2]])
+    ship_a = Ship(desc='ship_a desc', platonic=False, characters=[characters[0], characters[1], characters[2], characters[3]])
+    ship_b = Ship(desc='ship_b desc', platonic=False, characters=[characters[3], characters[1], characters[0], characters[2]])
 
     assert ship_a.identity == ship_b.identity, 'Identity with more than 2 characters is not working'
 
