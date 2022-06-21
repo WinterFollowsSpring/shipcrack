@@ -901,7 +901,7 @@ def tests():
         elis = character_like_user_ids[i]
         qlis = [user.id for user in character.likes]
 
-        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Incorrect Likes for character "{character.name}"'
+        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Incorrect Likes (user ids) for character "{character.name}", Expected: {elis}, Got: {qlis}'
 
         # tags
         etis = character_tag_ids[i]
