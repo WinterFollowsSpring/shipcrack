@@ -947,7 +947,7 @@ def tests():
                 p_characters = [characters[k] for k in p_character_indicies]
                 ship.platoniship.platonic_pairs.append(PlatonicPair(characters=p_characters))
 
-        print(f'TEST SLASH NAME: {user.slash_name}')
+        print(f'TEST SLASH NAME: {ship.slash_name}')
 
     print('Committing Ships...')
     db.session.commit()
