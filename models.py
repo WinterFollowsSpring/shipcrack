@@ -937,7 +937,7 @@ def tests():
         p_pair_indicies = []
         if not ship.platonic and len(s_characters) > 2:
             ship_characters[i].update({'platonic_pair_indicies': []})
-            num_platonic_pairs = math.floor(math.random() * (len(s_characters) - 2))
+            num_platonic_pairs = math.floor(random.random() * (len(s_characters) - 2))
             for j in num_platonic_pairs:
                 p_character_indicies = list(set([math.floor(random.random()*len(s_characters)) for k in range(2)]))
                 if len(p_character_indicies) != 2:
