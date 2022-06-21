@@ -197,7 +197,7 @@ class PlatonicPair(db.Model):
         return ' & '.join(character_names)
 
 
-def ship_identity(self, characters, platonic_pairs, platonic_bool):
+def ship_identity(characters, platonic_pairs, platonic_bool):
     character_ids = frozenset([character.id for character in characters])
     platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) if isinstance(pair, PlatonicPair) else frozenset([character.id for character in pair]) for pair in platonic_pairs])
     return set([character_ids, platonic_bool, platonic_pair_character_ids])
