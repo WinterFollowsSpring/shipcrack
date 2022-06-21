@@ -796,8 +796,8 @@ def tests():
         qpns = [parent.name for parent in fandom.parents ]
         qcns = [child.name  for child  in fandom.children]
 
-        epns = [fandom_names.index(j) for j in parent_ids]
-        ecns = [fandom_names.index(j) for j in child_ids ]
+        epns = [fandom_names[j] for j in parent_ids]
+        ecns = [fandom_names[j] for j in child_ids ]
 
         assert all(qpn in epns for qpn in qpns) and all(epn in qpns for epn in epns), f'Invalid parents for fandom "{fandom.name}", Expected: {epns}, Got: {qpns}'
         assert all(qcn in ecns for qcn in qcns) and all(ecn in qcns for ecn in ecns), f'Invalid children for fandom "{fandom.name}", Expected: {ecns}, Got: {qcns}'
@@ -807,8 +807,8 @@ def tests():
         qans = [ancestor.name   for ancestor   in fandom.ancestors  ]
         qdns = [descendent.name for descendent in fandom.descendents]
 
-        eans = [fandom_names.index(j) for j in ancestor_ids  ]
-        edns = [fandom_names.index(j) for j in descendent_ids]
+        eans = [fandom_names[j] for j in ancestor_ids  ]
+        edns = [fandom_names[j] for j in descendent_ids]
 
         assert all(qan in eans for qan in qans) and all(ean in qans for ean in eans), f'Invalid ancestors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
         assert all(qdn in edns for qdn in qdns) and all(edn in qdns for edn in edns), f'Invalid descendents for fandom "{fandom.name}", Expected: {edns}, Got: {qdns}'
