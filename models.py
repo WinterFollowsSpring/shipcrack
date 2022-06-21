@@ -754,9 +754,11 @@ def tests():
     fandoms[9].children.append(fandoms[6])
 
     print('Liking Fandoms...')
+    like_user_ids = [[] for i in range(len(fandoms))]
     for i in range(3):
         for j in range(2 + i):
             fandoms[i].likes.append(users[j])
+            like_user_ids[i].append(users[j].id)
     
     print('Adding Tags to Fandoms...')
     for i in range(2, 4):
@@ -783,14 +785,6 @@ def tests():
         qans = [author.name for author in fandom.authors]
 
         assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Invalid authors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
-
-        # expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
-        # assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
-        # for author in fandom.authors:
-        #    j = fandom_author_names.index(author.name)
-        #    assert author.company == (fandom_author_company_bools[j] is True), \
-        #        f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
-        #        ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
 
         # Parents and Children
         parent_ids, child_ids = fandom_hierarchy[i]
@@ -819,7 +813,13 @@ def tests():
         assert all(qan in eans for qan in qans) and all(ean in qans for ean in eans), f'Invalid ancestors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
         assert all(qdn in edns for qdn in qdns) and all(edn in qdns for edn in edns), f'Invalid descendents for fandom "{fandom.name}", Expected: {edns}, Got: {qdns}'
 
-        # TODO Likes
+        # Likes
+
+        elis = like_user_ids[i]
+        qlis = [user.id for user in fandom.likes]
+
+        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Invalid likes (user ids) for fandom "{fandom.name}", Expected: {elis}, Got: {qlis}'
+
         # TODO Tags
 
     # TODO
