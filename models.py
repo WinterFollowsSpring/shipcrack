@@ -261,6 +261,13 @@ class Ship(db.Model):
     def __eq__(self, other):
         return self.id == other.id
 
+    @property
+    def identity(self):
+        character_ids = set([character.id for character in self.characters])
+        # self.platonic
+        platonic_pair_character_ids = set([set([character.id for character in pair.characters]) for pair in self.platonic_pairs])
+        return set([character_ids, self.platonic, platonic_pair_character_ids])
+
 ship_name_votes = db.Table('ship_name_votes',
         db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True),
         db.Column('ship_name_id', db.Integer, db.ForeignKey('ship_names.id'), primary_key=True)
@@ -956,6 +963,7 @@ def tests():
                 ship.platonic_pairs.append(PlatonicPair(characters=p_characters))
 
         print(f'TEST SLASH NAME: {ship.slash_name}')
+        print(f'TEST IDENTITY:   {ship.identity}')
 
     print('Committing Ships...')
     db.session.commit()
