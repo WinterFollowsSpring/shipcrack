@@ -852,7 +852,7 @@ def tests():
         num_likes = math.floor(random.random()*len(users))
         user_ids = list(set([math.floor(random.random()*len(users)) for k in range(num_likes)]))
         c_likes = [users[k] for k in user_ids]
-        character_like_user_ids[i].extend(user_ids)
+        character_like_user_ids[i].extend([num + 1 for num in user_ids])
         character.likes.extend(c_likes)
 
     print('Adding Tags to Characters')
