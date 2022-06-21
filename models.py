@@ -920,7 +920,7 @@ def tests():
     print('Creating Ships...')
     ship_descs = [f'ship description {i}' for i in range(10)]
     ship_platonic_bools = [i % 2 == 1 for i in range(10)]
-    ships = [Ship(desc=ship_descs[i], platonic=ship_platonic_bools)]
+    ships = [Ship(desc=ship_descs[i], platonic=ship_platonic_bools) for i in range(10)]
 
     print('Adding Characters and Platonic Pairs to Ships')
     ship_characters = [{} for i in range(10)]
@@ -946,6 +946,8 @@ def tests():
                 ship_characters[i]['platonic_pair_indicies'].append(p_character_indicies)
                 p_characters = [characters[k] for k in p_character_indicies]
                 ship.platoniship.platonic_pairs.append(PlatonicPair(characters=p_characters))
+
+        print(f'TEST SLASH NAME: {user.slash_name}')
 
     print('Committing Ships...')
     db.session.commit()
