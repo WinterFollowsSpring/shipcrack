@@ -229,7 +229,9 @@ class Ship(db.Model):
     def slash_name(self):
         join_str = ' / ' if not self.platonic else ' & '
         if len(self.characters) > 0:
-            name = join_str.join([character.name for character in self.characters])
+            sorted_names = [character.name for character in self.character]
+            sorted_names.sort(key = lambda nm : nm.lower())
+            name = join_str.join(sorted_names)
             if len(self.platonic_pairs) > 0:
                 name += ': ('
                 pairs_strings = []
@@ -953,7 +955,7 @@ def tests():
     print('Committing Ships...')
     db.session.commit()
 
-    # Ship(characters=[], platonic=bool, desc='', platonicpairs=[], tags, names, likes...)
+    print('Testing Ships...') # TODO
 
     print('INCOMPLETE') # TODO
 
