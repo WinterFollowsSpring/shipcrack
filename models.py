@@ -933,43 +933,11 @@ def tests():
 
     print('PASSED CHARACTER CHECKS\n')
 
-    print('Creating Ships...')
-    ship_descs = [f'ship description {i}' for i in range(10)]
-    ship_platonic_bools = [i % 2 == 1 for i in range(10)]
-    ships = [Ship(desc=ship_descs[i], platonic=ship_platonic_bools[i]) for i in range(10)]
+    print('Doing Customized Ship Checks...')
+    ship_a = Ship(desc='ship_a desc', platonic=False, characters=[characters[0], characters[1]])
+    ship_b = Ship(desc='wacky ship',  platonic=False, characters=[characters[0], characters[1]])
 
-    print('Adding Characters and Platonic Pairs to Ships')
-    ship_characters = [{} for i in range(10)]
-    for i in range(10):
-        ship = ships[i]
-
-        num_characters = math.floor(random.random()*len(characters))
-        character_indicies = list(set([math.floor(random.random()*len(characters)) for j in range(num_characters)]))
-        s_characters = [characters[j] for j in character_indicies]
-        
-        ship_characters[i].update({'character_indicies': character_indicies})
-        ship.characters.extend(s_characters)
-
-        p_pair_indicies = []
-        if not ship.platonic and len(s_characters) > 2:
-            ship_characters[i].update({'platonic_pair_indicies': []})
-            num_platonic_pairs = math.floor(random.random() * (len(s_characters) - 2))
-            for j in range(num_platonic_pairs):
-                p_character_indicies = list(set([math.floor(random.random()*len(s_characters)) for k in range(2)]))
-                if len(p_character_indicies) != 2:
-                    continue
-
-                ship_characters[i]['platonic_pair_indicies'].append(p_character_indicies)
-                p_characters = [characters[k] for k in p_character_indicies]
-                ship.platonic_pairs.append(PlatonicPair(characters=p_characters))
-
-        print(f'TEST SLASH NAME: {ship.slash_name}')
-        print(f'TEST IDENTITY:   {ship.identity}')
-
-    print('Committing Ships...')
-    db.session.commit()
-
-    print('Testing Ships...') # TODO
+    assert ship_a.identity == ship_b.identity, 'Identity is not fucking working'
 
     print('INCOMPLETE') # TODO
 
