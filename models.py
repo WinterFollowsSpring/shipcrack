@@ -761,9 +761,11 @@ def tests():
             like_user_ids[i].append(users[j].id)
     
     print('Adding Tags to Fandoms...')
+    fandom_tag_ids = [[] for i in range(len(fandoms))]
     for i in range(2, 4):
         for j in range(i + 2):
             fandoms[i].tags.append(tags[j])
+            fandom_tag_ids[i].append(tags[j].id)
 
     print('Committing Fandoms...')
     db.session.commit()
@@ -820,9 +822,14 @@ def tests():
 
         assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Invalid likes (user ids) for fandom "{fandom.name}", Expected: {elis}, Got: {qlis}'
 
-        # TODO Tags
+        # Tags
 
-    # TODO
+        etis = fandom_tag_ids[i]
+        qtis = [tag.id for tag in fandom.tags]
 
-    print('INCOMPLETE')
+        assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Invalid tags (tag ids) for fandom "{fandom.name}", Expected: {etis}, Got: {qtis}'
+
+    print('PASSED BASIC FANDOM CHECKS\n')
+
+    print('INCOMPLETE') # TODO
 
