@@ -933,11 +933,30 @@ def tests():
 
     print('PASSED CHARACTER CHECKS\n')
 
-    print('Doing Customized Ship Checks...')
+    print('Doing Customized Ship Identity Checks...')
+    # Simple
     ship_a = Ship(desc='ship_a desc', platonic=False, characters=[characters[0], characters[1]])
-    ship_b = Ship(desc='wacky ship',  platonic=False, characters=[characters[0], characters[1]])
+    ship_b = Ship(desc='wacky ship',  platonic=False, characters=[characters[1], characters[0]])
 
-    assert ship_a.identity == ship_b.identity, 'Identity is not fucking working'
+    assert ship_a.identity == ship_b.identity, 'Identity is not working with just two characters'
+
+    # More than 2 characters
+    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]])
+    ship_b = Ship(desc='ship_b desc', characters=[characters[3], characters[1], characters[0], characters[2]])
+
+    assert ship_a.identity == ship_b.identity, 'Identity with more than 2 characters is not working'
+
+    # Platonic vs Non-Platonic
+    ship_a.platonic = True
+
+    assert ship_a.identity != ship_b.identity, 'Platonic vs Non-Platonic Identity is not working'
+
+    # Simple Platonic Pair Test
+    ship_a.platonic = False
+    ship_a.platonic_pairs.append(PlatonicPair(characters=[characters[3], characters[2]]))
+    ship_b.platonic_pairs.append(PlatonicPair(characters=[characters[2], characters[3]]))
+
+    assert ship_a.identity == ship_b.identity, 'Platonic Pairs are not working with identity'
 
     print('INCOMPLETE') # TODO
 
