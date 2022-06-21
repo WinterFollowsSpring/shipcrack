@@ -190,6 +190,12 @@ class PlatonicPair(db.Model):
     def __eq__(self, other):
         return self.id == other.id
 
+    @property
+    def name(self):
+        character_names = [character.name for character in self.characters]
+        character_names.sort(key=lambda name : name.lower())
+        return ' & '.join(character_names)
+
 class Ship(db.Model):
     __tablename__ = 'ships'
 
@@ -222,7 +228,7 @@ class Ship(db.Model):
     @property
     def sorted_names(self):
         sorted_list = self.names.copy()
-        sorted_list.sort(reverse=True, key=lambda name : len(name.votes))
+        sorted_list.sort(reverse=True, key=lambda name : [len(name.votes), name.name.lower()])
         return sorted_list
 
     @property
@@ -234,15 +240,14 @@ class Ship(db.Model):
             name = join_str.join(sorted_names)
             if len(self.platonic_pairs) > 0:
                 name += ': ('
-                pairs_strings = []
-                for pair in self.platonic_pairs:
-                    pairs_strings.append(' & '.join([character.name for character in pair.characters]))
-                name += ', '.join(pairs_strings) + ')'
+                pair_names = [pair.name for pair in self.platonic_pairs]
+                pair_names.sort(key = lambda name : name.lower())
+                name += ', '.join(pair_names) + ')'
             return name
         return 'NO CHARACTERS'
 
     @property
-    def consensus_name(self):
+    def name(self):
         if len(self.names) > 0:
             return self.sorted_names[0].name
         return self.slash_name
