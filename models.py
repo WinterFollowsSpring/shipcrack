@@ -262,10 +262,11 @@ class Ship(db.Model):
         return self.id == other.id
 
     @property
-    def identity(self):
-        character_ids = set([character.id for character in self.characters])
+    def identity(self):0
+        character_ids = frozenset([character.id for character in self.characters])
         # self.platonic
-        platonic_pair_character_ids = set([set([character.id for character in pair.characters]) for pair in self.platonic_pairs])
+        platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) for pair in self.platonic_pairs])
+        
         return set([character_ids, self.platonic, platonic_pair_character_ids])
 
 ship_name_votes = db.Table('ship_name_votes',
