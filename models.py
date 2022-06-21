@@ -236,7 +236,8 @@ class Ship(db.Model):
                 for pair in self.platonic_pairs:
                     pairs_strings.append(' & '.join([character.name for character in pair.characters]))
                 name += ', '.join(pairs_strings) + ')'
-        return name
+            return name
+        return 'NO CHARACTERS'
 
     @property
     def consensus_name(self):
