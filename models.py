@@ -849,7 +849,7 @@ def tests():
     character_tag_ids = [[] for i in range(30)]
     for i in range(len(characters)):
         character = characters[i]
-        tag_ids = list(set([math.floor(random.random()*len(tags)) for k in range(len(tags)/2)]))
+        tag_ids = list(set([math.floor(random.random()*len(tags)) for k in range(math.floor(len(tags)/2))]))
         c_tags = [tags[k] for k in tag_ids]
         character_tag_ids[i].extend([tag.id for tag in c_tags])
         character.tags.extend(c_tags)
@@ -858,7 +858,7 @@ def tests():
     character_fandom_ids = [[] for i in range(30)]
     for i in range(len(characters)):
         character = characters[i]
-        fandom_ids = list(set([math.floor(random.random()*len(fandoms)) for k in range(len(fandoms)/2)]))
+        fandom_ids = list(set([math.floor(random.random()*len(fandoms)) for k in range(math.floor(len(fandoms)/2))]))
         c_fandoms = [fandoms[k] for k in fandom_ids]
         character_fandom_ids[i].extend([fandom.id for fandom in c_fandoms])
         character.fandoms.extend(fandoms)
