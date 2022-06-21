@@ -775,19 +775,24 @@ def tests():
     for fandom in fandoms:
         i = fandom_names.index(fandom.name)
         
-        # descs
+        # Descs
         assert fandom.desc == fandom_descs[i], f'Incorrect Fandom Desc, expected: {fandom_descs[i]}, got: {fandom.desc}'
         
-        # authors
-        expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
-        assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
-        for author in fandom.authors:
-            j = fandom_author_names.index(author.name)
-            assert author.company == (fandom_author_company_bools[j] is True), \
-                f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
-                ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
+        # Authors
+        eans = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
+        qans = [author.name for author in fandom.authors]
 
-        # hierarchy
+        assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Invalid authors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
+
+        # expected_author_names = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
+        # assert len(fandom.authors) == len(expected_author_names), f'Expected {len(expected_authors)} authors for fandom "{fandom.name}", Got {len(fandom.authors)} authors'
+        # for author in fandom.authors:
+        #    j = fandom_author_names.index(author.name)
+        #    assert author.company == (fandom_author_company_bools[j] is True), \
+        #        f'Wrong author company bool on author "{author.name}" in fandom "{fandom.name}",'\
+        #        ' Got: {author.company}, Expected: {fandom_author_company_bools[j]}'
+
+        # Parents and Children
         parent_ids, child_ids = fandom_hierarchy[i]
 
         assert len(parent_ids) == len(fandom.parents),  f'Incorrect number of parents for fandom "{fandom.name}", expected {len(parent_ids)}, got {len(fandom.parents)}'
@@ -802,6 +807,7 @@ def tests():
         assert all(qpn in epns for qpn in qpns) and all(epn in qpns for epn in epns), f'Invalid parents for fandom "{fandom.name}", Expected: {epns}, Got: {qpns}'
         assert all(qcn in ecns for qcn in qcns) and all(ecn in qcns for ecn in ecns), f'Invalid children for fandom "{fandom.name}", Expected: {ecns}, Got: {qcns}'
 
+        # Ancestors and Descendents
         ancestor_ids, descendent_ids = fandom_meta_hierarchy[i]
 
         qans = [ancestor.name   for ancestor   in fandom.ancestors  ]
@@ -812,9 +818,9 @@ def tests():
 
         assert all(qan in eans for qan in qans) and all(ean in qans for ean in eans), f'Invalid ancestors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
         assert all(qdn in edns for qdn in qdns) and all(edn in qdns for edn in edns), f'Invalid descendents for fandom "{fandom.name}", Expected: {edns}, Got: {qdns}'
-        # TODO ancestors and descendents
-        # TODO likes
-        # TODO tags
+
+        # TODO Likes
+        # TODO Tags
 
     # TODO
 
