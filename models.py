@@ -196,6 +196,12 @@ class PlatonicPair(db.Model):
         character_names.sort(key=lambda name : name.lower())
         return ' & '.join(character_names)
 
+
+def ship_identity(self, characters, platonic_pairs, platonic_bool):
+    character_ids = frozenset([character.id for character in characters])
+    platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) if isinstance(pair, PlatonicPair) else frozenset([character.id for character in pair]) for pair in platonic_pairs])
+    return set([character_ids, platonic_bool, platonic_pair_character_ids])
+
 class Ship(db.Model):
     __tablename__ = 'ships'
 
@@ -263,11 +269,7 @@ class Ship(db.Model):
 
     @property
     def identity(self):
-        character_ids = frozenset([character.id for character in self.characters])
-        # self.platonic
-        platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) for pair in self.platonic_pairs])
-        
-        return set([character_ids, self.platonic, platonic_pair_character_ids])
+        return ship_identity(self.characters, self.platonic_pairs, self.platonic)
 
 ship_name_votes = db.Table('ship_name_votes',
         db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True),
@@ -966,6 +968,17 @@ def tests():
     ship_b.platonic_pairs.extend([PlatonicPair(characters=[characters[2], characters[3]]), PlatonicPair(characters=[characters[2], characters[1]])])
 
     assert ship_a.identity == ship_b.identity, f'Platonic Pairs not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
+
+    cs = [characters[0], characters[1], characters[2], characters[3]]
+    ps = [[characters[0], characters[2]], [characters[2], characters[1]]]
+    random.shuffle(cs)
+    random.shuffle(ps)
+    idn = ship_identity(cs, ps, False)
+    random.shuffle(cs)
+    random.shuffle(ps)
+    ship_c = Ship(desc='ship_c desc', platonic=False, characters=cs, platonic_pairs=ps)
+
+    assert idn == ship_c.identity, f'Failed, idn: {idn}, ship_c: {ship_c.identity}'
 
     print('INCOMPLETE') # TODO
 
