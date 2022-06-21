@@ -958,5 +958,10 @@ def tests():
 
     assert ship_a.identity == ship_b.identity, f'Platonic Pairs are not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
 
+    # Advanced Platonic Pair Tests
+    ship_a.platonic_pairs.extend([PlatonicPair(characters=[characters[1], characters[2]]), PlatonicPair(characters=[characters[3], characters[2]])])
+
+    assert ship_a.identity != ship_b.identity, f'Platonic Pairs not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
+
     print('INCOMPLETE') # TODO
 
