@@ -861,7 +861,7 @@ def tests():
         fandom_ids = list(set([math.floor(random.random()*len(fandoms)) for k in range(math.floor(len(fandoms)/2))]))
         c_fandoms = [fandoms[k] for k in fandom_ids]
         character_fandom_ids[i].extend([fandom.id for fandom in c_fandoms])
-        character.fandoms.extend(fandoms)
+        character.fandoms.extend(c_fandoms)
 
     print('Committing Characters...')
     db.session.commit()
