@@ -685,7 +685,7 @@ def tests():
         assert user.password         == passwords[i], f'"{user.password}" should be "{passwords[i]}"'
         assert user.blurb            == blurbs[i],    f'"{user.blurb}" should be "{blurbs[i]}"'
         assert user.permission_level == permission_levels[i], f'"{user.permission_level}" should be "{permission_levels[i]}"'
-    print('PASSED BASIC USER CHECKS\n')
+    print('PASSED USER CHECKS\n')
 
     print('Creating Tags...')
     tag_names = ['Gay', 'Cute', 'Jedi', 'Spicy Noodles', 'Pink']
@@ -703,7 +703,7 @@ def tests():
     assert len(tags) == len(tag_names), 'Incorrect number of tags {len(tags)}, should be {len(tag_names)}'
     queried_tag_names = [tag.name for tag in tags]
     assert all(tag_name in queried_tag_names for tag_name in tag_names), 'Incorrect tag names, Expected: {tag_names}, Got: {queried_tag_names}'
-    print('PASSED BASIC TAG CHECKS\n')
+    print('PASSED TAG CHECKS\n')
 
     print('Creating Fandoms...')
     fandom_names = [f'test fandom {i}' for i in range(10)]
@@ -830,7 +830,7 @@ def tests():
 
         assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Invalid tags (tag ids) for fandom "{fandom.name}", Expected: {etis}, Got: {qtis}'
 
-    print('PASSED BASIC FANDOM CHECKS\n')
+    print('PASSED FANDOM CHECKS\n')
 
     print('Creating Characters...')
     character_names = [f'character {i}' for i in range(30)]
@@ -844,6 +844,16 @@ def tests():
         aliases = [f'character alias {i}:{j}' for j in range(i * 2)]
         alias_names[i].extend(aliases)
         character.aliases.extend([Character_Alias(name=aliases[j]) for j in range(len(aliases))])
+
+    print('Liking Characters...')
+    character_like_user_ids = [[] for i in range(len(characters))]
+    for i in range(len(characters)):
+        character = characters[i]
+        num_likes = math.floor(random.random()*len(users))
+        user_ids = list(set([math.floor(random.random()*len(users)) for k in range(num_likes)]))
+        c_likes = [users[k] for k in user_ids]
+        character_like_user_ids[i].extend(user_ids)
+        character.likes.extend(c_likes)
 
     print('Adding Tags to Characters')
     character_tag_ids = [[] for i in range(30)]
@@ -886,14 +896,18 @@ def tests():
         qans = [alias.name for alias in character.aliases]
         
         assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Incorrect Character Aliases for character "{character.name}"'
-    
+
+        # likes
+        elis = character_like_user_ids[i]
+        qlis = [user.id for user in character.likes]
+
+        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Incorrect Likes for character "{character.name}"'
+
         # tags
         etis = character_tag_ids[i]
         qtis = [tag.id for tag in character.tags]
 
         assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Incorrect Character Tags for character "{character.name}"'
-
-        # FORGOT LIKES TODO
 
         # fandoms
         efis = character_fandom_ids[i]
@@ -901,9 +915,42 @@ def tests():
 
         assert all(efi in qfis for efi in efis) and all(qfi in efis for qfi in qfis), f'Incorrect Character Fandoms for character "{character.name}", Expected: {efis}, Got: {qfis}'
 
-    print('PASSED BASIC CHARACTER CHECKS\n')
+    print('PASSED CHARACTER CHECKS\n')
 
-    print('Creating Ships...') # TODO
+    print('Creating Ships...')
+    ship_descs = [f'ship description {i}' for i in range(10)]
+    ship_platonic_bools = [i % 2 == 1 for i in range(10)]
+    ships = [Ship(desc=ship_descs[i], platonic=ship_platonic_bools)]
+
+    print('Adding Characters and Platonic Pairs to Ships')
+    ship_characters = [{} for i in range(10)]
+    for i in range(10):
+        ship = ships[i]
+
+        num_characters = math.floor(random.random()*len(characters))
+        character_indicies = list(set([math.floor(random.random()*len(characters)) for j in range(num_characters)]))
+        s_characters = [characters[j] for j in character_indicies]
+        
+        ship_characters[i].update({'character_indicies': character_indicies})
+        ship.characters.extend(s_characters)
+
+        p_pair_indicies = []
+        if not ship.platonic and len(s_characters) > 2:
+            ship_characters[i].update({'platonic_pair_indicies': []})
+            num_platonic_pairs = math.floor(math.random() * (len(s_characters) - 2))
+            for j in num_platonic_pairs:
+                p_character_indicies = list(set([math.floor(random.random()*len(s_characters)) for k in range(2)]))
+                if len(p_character_indicies) != 2:
+                    continue
+
+                ship_characters[i]['platonic_pair_indicies'].append(p_character_indicies)
+                p_characters = [characters[k] for k in p_character_indicies]
+                ship.platoniship.platonic_pairs.append(PlatonicPair(characters=p_characters))
+
+    print('Committing Ships...')
+    db.session.commit()
+
+    # Ship(characters=[], platonic=bool, desc='', platonicpairs=[], tags, names, likes...)
 
     print('INCOMPLETE') # TODO
 
