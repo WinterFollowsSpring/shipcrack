@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+import random
 
 DB_USERNAME = 'WinterFollowsSpr'
 DB_PASSWORD = 'Z3aGw~Jhjn$H`Mc!e3X6VW{h;(X,`j'
@@ -830,6 +831,71 @@ def tests():
         assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Invalid tags (tag ids) for fandom "{fandom.name}", Expected: {etis}, Got: {qtis}'
 
     print('PASSED BASIC FANDOM CHECKS\n')
+
+    print('Creating Characters...')
+    character_names = [f'character {i}' for i in range(30)]
+    character_descs = [f'character desc {i}' for i in range(30)]
+    characters = [Character(name=character_names[i], desc=character_descs[i]) for i in range(30)]
+    
+    print('Creating and Adding Aliases...')
+    alias_names = [[] for i in range(30)]
+    for i in range(len(characters)):
+        character = characters[i]
+        aliases = [f'character alias {i}:{j}' for j in range(i * 2)]
+        alias_names[i].extend(aliases)
+        character.aliases.extend([Character_Alias(name=aliases[j]) for j in range(len(aliases))])
+
+    print('Adding Tags to Characters')
+    character_tag_ids = [[] for i in range(30)]
+    for i in range(len(characters)):
+        character = characters[i]
+        c_tags = [tags[k] for k in list(set([random.randint(0, len(tags)) for j in range(random.randint(1, 3))]))]
+        character_tag_ids[i].extend([tag.id for tag in c_tags])
+        character.tags.extend(c_tags)
+
+    print('Adding Characters to Fandoms...')
+    character_fandom_ids = [[] for i in range(30)]
+    for i in range(len(characters)):
+        character = characters[i]
+        c_fandoms = [fandoms[k] for k in list(set([random.randint(0, len(fandoms)) for j in range(random.randint(0, 10))]))]
+        character_fandom_ids[i].extend([fandom.id for fandom in c_fandoms])
+        character.fandoms.extend(fandoms)
+
+    print('Committing Characters...')
+    db.session.commit()
+
+    print('Testing Characters')
+    characters = Character.query.all()
+    
+    qcns = [character.name for character in characters]
+    ecns = character_names
+
+    assert all(ecn in qcns for ecn in ecns) and all(qcn in ecns for qcn in qcns), f'Incorrect characters, Expected: {ecns}, got {qcns}'
+
+    for character in characters:
+        i = character_names.index(character.name)
+
+        assert character_descs[i] == character.desc, f'Incorrect desc in character "{character.name}", Expected: "{character_descs[i]}", Got: {character.desc}'
+        assert character.active == True, f'Character "{character.name}" isn\'t active'
+        assert len(character.edit_suggestions) == 0, f'Incorrect number of edit suggestions for character "{character.name}"'
+        
+        # aliases
+        eans = alias_names[i]
+        qans = [alias.name for alias in character.aliases]
+        
+        assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Incorrect Character Aliases for character "{character.name}"'
+    
+        # tags
+        etis = character_tag_ids[i]
+        qtis = [tag.id for tag in character.tags]
+
+        assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Incorrect Character Tags for character "{character.name}"'
+
+        # fandoms
+        efis = character_fandom_ids[i]
+        qfis = [fandom.id for fandom in character.fandoms]
+
+        assert all(efi in qfis for efi in efis) and all(qfi in efis for qfi in qfis), f'Incorrect Character Fandoms for character "{character.name}"'
 
     print('INCOMPLETE') # TODO
 
