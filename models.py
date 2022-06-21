@@ -897,7 +897,7 @@ def tests():
         efis = character_fandom_ids[i]
         qfis = [fandom.id for fandom in character.fandoms]
 
-        assert all(efi in qfis for efi in efis) and all(qfi in efis for qfi in qfis), f'Incorrect Character Fandoms for character "{character.name}"'
+        assert all(efi in qfis for efi in efis) and all(qfi in efis for qfi in qfis), f'Incorrect Character Fandoms for character "{character.name}", Expected: {efis}, Got: {qfis}'
 
     print('INCOMPLETE') # TODO
 
