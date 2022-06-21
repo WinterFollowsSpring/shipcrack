@@ -945,7 +945,7 @@ def tests():
 
                 ship_characters[i]['platonic_pair_indicies'].append(p_character_indicies)
                 p_characters = [characters[k] for k in p_character_indicies]
-                ship.platoniship.platonic_pairs.append(PlatonicPair(characters=p_characters))
+                ship.platonic_pairs.append(PlatonicPair(characters=p_characters))
 
         print(f'TEST SLASH NAME: {ship.slash_name}')
 
