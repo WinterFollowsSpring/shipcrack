@@ -976,7 +976,7 @@ def tests():
     idn = ship_identity(cs, ps, False)
     random.shuffle(cs)
     random.shuffle(ps)
-    ship_c = Ship(desc='ship_c desc', platonic=False, characters=cs, platonic_pairs=ps)
+    ship_c = Ship(desc='ship_c desc', platonic=False, characters=cs, platonic_pairs=[PlatonicPair(characters=ps[i]) for i in range(len(ps))])
 
     assert idn == ship_c.identity, f'Failed, idn: {idn}, ship_c: {ship_c.identity}'
 
