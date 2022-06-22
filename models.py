@@ -202,12 +202,12 @@ def ship_identity(characters, platonic_pairs, platonic_bool):
     char_ids = [character.id for character in characters]
     plat_ids = [[character.id for character in pair] for pair in platonic_pairs]
     char_ids.sort()
-    character_strings = ','.join(char_ids)
+    character_strings = ','.join([str(cid) for cid in char_ids])
     for pair in plat_ids:
         pair.sort()
     plat_ids.sort()
-    plats = [','.join(plat) for plat in plat_ids]
-    platonic_pair_strings = ';'.join(plats)
+    plats = [','.join([str(pid) for pid in plat]) for plat in plat_ids]
+    platonic_pair_strings = ';'.join([str(plid) for plid in plats])
 
     return f'{character_strings}:{platonic_pair_strings}:{platonic_bool}'
 
