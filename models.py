@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.hybrid import hybrid_property
 from flask_login import UserMixin
 import random, math
 
@@ -267,7 +268,7 @@ class Ship(db.Model):
     def __eq__(self, other):
         return self.id == other.id
 
-    @property
+    @hybrid_property
     def identity(self):
         return ship_identity(self.characters, self.platonic_pairs, self.platonic)
 
@@ -936,49 +937,16 @@ def tests():
     print('PASSED CHARACTER CHECKS\n')
 
     print('Doing Customized Ship Identity Checks...')
-    # Simple
-    ship_a = Ship(desc='ship_a desc', platonic=False, characters=[characters[0], characters[1]])
-    ship_b = Ship(desc='wacky ship',  platonic=False, characters=[characters[1], characters[0]])
 
-    assert ship_a.identity == ship_b.identity, 'Identity is not working with just two characters'
+    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]], platonic_pairs=[[characters[0], characters[3]], [characters[1], characters[2]]])
 
-    # More than 2 characters
-    ship_a = Ship(desc='ship_a desc', platonic=False, characters=[characters[0], characters[1], characters[2], characters[3]])
-    ship_b = Ship(desc='ship_b desc', platonic=False, characters=[characters[3], characters[1], characters[0], characters[2]])
+    db.session.add(ship_a)
+    db.session.commit()
 
-    assert ship_a.identity == ship_b.identity, 'Identity with more than 2 characters is not working'
+    idn = ship_identity([characters[2], characters[3], characters[0], characters[1]], [[characters[2], characters[1]], [characters[3], characters[0]]], False)
 
-    # Platonic vs Non-Platonic
-    ship_a.platonic = True
-
-    assert ship_a.identity != ship_b.identity, 'Platonic vs Non-Platonic Identity is not working'
-
-    # Simple Platonic Pair Test
-    ship_a.platonic = False
-    ship_a.platonic_pairs.append(PlatonicPair(characters=[characters[3], characters[2]]))
-    ship_b.platonic_pairs.append(PlatonicPair(characters=[characters[2], characters[3]]))
-
-    assert ship_a.identity == ship_b.identity, f'Platonic Pairs are not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
-
-    # Advanced Platonic Pair Tests
-    ship_a.platonic_pairs.extend([PlatonicPair(characters=[characters[1], characters[2]]), PlatonicPair(characters=[characters[3], characters[2]])])
-
-    assert ship_a.identity != ship_b.identity, f'Platonic Pairs not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
-
-    ship_b.platonic_pairs.extend([PlatonicPair(characters=[characters[2], characters[3]]), PlatonicPair(characters=[characters[2], characters[1]])])
-
-    assert ship_a.identity == ship_b.identity, f'Platonic Pairs not working with identity, ship_a: {ship_a.identity}, ship_b: {ship_b.identity}'
-
-    cs = [characters[0], characters[1], characters[2], characters[3]]
-    ps = [[characters[0], characters[2]], [characters[2], characters[1]]]
-    random.shuffle(cs)
-    random.shuffle(ps)
-    idn = ship_identity(cs, ps, False)
-    random.shuffle(cs)
-    random.shuffle(ps)
-    ship_c = Ship(desc='ship_c desc', platonic=False, characters=cs, platonic_pairs=[PlatonicPair(characters=ps[i]) for i in range(len(ps))])
-
-    assert idn == ship_c.identity, f'Failed, idn: {idn}, ship_c: {ship_c.identity}'
-
-    print('INCOMPLETE') # TODO
-
+    ship_o = Ship.query.filter_by(identity=idn).first()
+    if not ship_o:
+        print('FAILED')
+    else:
+        print(ship_o.slash_name)
