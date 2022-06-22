@@ -201,7 +201,7 @@ class PlatonicPair(db.Model):
 def ship_identity(characters, platonic_pairs, platonic_bool):
     character_ids = frozenset([character.id for character in characters])
     platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) if isinstance(pair, PlatonicPair) else frozenset([character.id for character in pair]) for pair in platonic_pairs])
-    return set([character_ids, platonic_bool, platonic_pair_character_ids])
+    return str(set([character_ids, platonic_bool, platonic_pair_character_ids]))
 
 class Ship(db.Model):
     __tablename__ = 'ships'
