@@ -938,7 +938,7 @@ def tests():
 
     print('Doing Customized Ship Identity Checks...')
 
-    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]], platonic_pairs=[[characters[0], characters[3]], [characters[1], characters[2]]])
+    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]], platonic_pairs=[PlatonicPair(characters=[characters[0], characters[3]]), PlatonicPair(characters=[characters[1], characters[2]])])
 
     db.session.add(ship_a)
     db.session.commit()
