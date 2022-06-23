@@ -197,20 +197,6 @@ class PlatonicPair(db.Model):
         character_names.sort(key=lambda name : name.lower())
         return ' & '.join(character_names)
 
-
-def ship_identity(characters, platonic_pairs, platonic_bool):
-    char_ids = [character.id for character in characters]
-    plat_ids = [[character.id for character in pair] for pair in platonic_pairs]
-    char_ids.sort()
-    character_strings = ','.join([str(cid) for cid in char_ids])
-    for pair in plat_ids:
-        pair.sort()
-    plat_ids.sort()
-    plats = [','.join([str(pid) for pid in plat]) for plat in plat_ids]
-    platonic_pair_strings = ';'.join([str(plid) for plid in plats])
-
-    return f'{character_strings}:{platonic_pair_strings}:{platonic_bool}'
-
 #    character_ids = frozenset([character.id for character in characters])
 #    platonic_pair_character_ids = frozenset([frozenset([character.id for character in pair.characters]) if isinstance(pair, PlatonicPair) else frozenset([character.id for character in pair]) for pair in platonic_pairs])
 #    return str(set([character_ids, platonic_bool, platonic_pair_character_ids]))
@@ -282,7 +268,32 @@ class Ship(db.Model):
 
     @hybrid_property
     def identity(self):
-        return ship_identity(self.characters, self.platonic_pairs, self.platonic)
+        char_ids = [character.id for character in self.characters]
+        pair_ids = [[character.id for character in pair.characters] for pair in self.platonic_pairs]
+
+        char_ids.sort()
+        for pair in pair_ids:
+            pair.sort()
+        pair_ids.sort()
+
+        char_ids = ','.join([f{id} for id in char_ids])
+        pair_ids = ';'.join([','.join([f{id} for id in pair]) for pair in pair_ids])
+
+        return f'{char_ids}:{pair_ids}:{self.platonic}'
+
+def gen_identity(characters, platonic_pairs, platonic):
+    char_ids = [character.id for character in self.characters]
+    pair_ids = [[character.id for character in pair] for pair in self.platonic_pairs]
+
+    char_ids.sort()
+    for pair in pair_ids:
+        pair.sort()
+    pair_ids.sort()
+
+    char_ids = ','.join([f{id} for id in char_ids])
+    pair_ids = ';'.join([','.join([f{id} for id in pair]) for pair in pair_ids])
+
+    return f'{char_ids}:{pair_ids}:{platonic}'
 
 ship_name_votes = db.Table('ship_name_votes',
         db.Column('user_id',      db.Integer, db.ForeignKey('users.id'),      primary_key=True),
@@ -678,284 +689,26 @@ def tests():
     print('Creating All Tables...')
     db.create_all()
 
-    print('Creating Users...')
-    user_a  = User(username='user_a',  password='password1', blurb='test1')
-    user_b  = User(username='user_b',  password='password2', blurb='test2')
-    user_c  = User(username='user_c',  password='password3', blurb='test3')
-    curator = User(username='curator', password='password4', blurb='test4', permission_level=Permission.Curator)
-    mod     = User(username='mod',     password='password5', blurb='test5', permission_level=Permission.Mod)
-    admin   = User(username='admin',   password='password6', blurb='test6', permission_level=Permission.Admin)
-
-    print('Adding Users...')
-    db.session.add(user_a)
-    db.session.add(user_b)
-    db.session.add(user_c)
-    db.session.add(curator)
-    db.session.add(mod)
-    db.session.add(admin)
-
-    print('Committing Users...')
-    db.session.commit()
-
-    print('Testing Users...')
-    usernames = ['user_a', 'user_b', 'user_c', 'curator', 'mod', 'admin']
-    passwords = ['password1', 'password2', 'password3', 'password4', 'password5', 'password6']
-    blurbs = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6']
-    permission_levels = [Permission.Standard, 
-                            Permission.Standard, 
-                            Permission.Standard, 
-                            Permission.Curator, 
-                            Permission.Mod, 
-                            Permission.Admin]
-    users = User.query.all()
-    queried_usernames = [user.username for user in users]
-    assert len(users) == 6, 'Incorrect number of users saved'
-    assert all(username in queried_usernames for username in usernames), 'Failed to find all expected usernames. Expected: {usernames}, Got: {queried_usernames}'
-    for user in users:
-        i = usernames.index(user.username)
-        assert user.password         == passwords[i], f'"{user.password}" should be "{passwords[i]}"'
-        assert user.blurb            == blurbs[i],    f'"{user.blurb}" should be "{blurbs[i]}"'
-        assert user.permission_level == permission_levels[i], f'"{user.permission_level}" should be "{permission_levels[i]}"'
-    print('PASSED USER CHECKS\n')
-
-    print('Creating Tags...')
-    tag_names = ['Gay', 'Cute', 'Jedi', 'Spicy Noodles', 'Pink']
-    tags = [Tag(name=tag_names[i]) for i in range(len(tag_names))]
-
-    print('Adding Tags...')
-    for tag in tags:
-        db.session.add(tag)
-
-    print('Committing Tags...')
-    db.session.commit()
-
-    print('Testing Tags...')
-    tags = Tag.query.all()
-    assert len(tags) == len(tag_names), 'Incorrect number of tags {len(tags)}, should be {len(tag_names)}'
-    queried_tag_names = [tag.name for tag in tags]
-    assert all(tag_name in queried_tag_names for tag_name in tag_names), 'Incorrect tag names, Expected: {tag_names}, Got: {queried_tag_names}'
-    print('PASSED TAG CHECKS\n')
-
-    print('Creating Fandoms...')
-    fandom_names = [f'test fandom {i}' for i in range(10)]
-    fandom_descs = [f'test fandom desc {i}' for i in range(10)]
-    fandoms = [Fandom(name=fandom_names[i], desc=fandom_descs[i]) for i in range(10)]
-
-    print('Adding Fandoms...')
-    for fandom in fandoms:
-        db.session.add(fandom)
-
-    fandom_author_names = [f'test author {i}' for i in range(30)]
-    fandom_author_company_bools = [*(True for i in range(10)), *(False for i in range(10)), *(None for i in range(10))]
-    fandom_author_map = [(i, i + 10, i + 20) for i in range(10)]
-    fandom_authors = [(Author(name=fandom_author_names[i], company=fandom_author_company_bools[i]) if fandom_author_company_bools[i] is not None else Author(name=fandom_author_names[i])) for i in range(30)]
-    
-    print('Adding Authors to Fandoms...')
-    for i in range(10):
-        fandoms[i].authors.extend([fandom_authors[fandom_author_map[i][j]] for j in range(3)])
-
-    print('Creating Fandom Hierarchy...')
-    fandom_hierarchy = [
-            ((),   (1, 2)),    # 0
-            ((0,), (3, 4, 7)), # 1
-            ((0,), (7, 5, 6)), # 2
-            ((1,), ()),        # 3
-            ((1,), ()),        # 4
-            ((2,), ()),        # 5
-            ((2, 9), ()),      # 6
-            ((1, 2), (8,)),    # 7
-            ((7,), ()),        # 8
-            ((), (6,))         # 9
-    ]
-    fandom_meta_hierarchy = [
-            ((), (1, 2, 3, 4, 5, 6, 7, 8)), # 0
-            ((0,), (3, 4, 7, 8)),           # 1
-            ((0,), (8, 7, 5, 6)),           # 2
-            ((1, 0), ()),                   # 3
-            ((1, 0), ()),                   # 4
-            ((2, 0), ()),                   # 5
-            ((2, 0, 9), ()),                # 6
-            ((1, 2, 0), (8,)),              # 7
-            ((7, 1, 2, 0), ()),             # 8
-            ((), (6,))                      # 9
-    ]
-    for i in range(3):
-        fandoms[i].children.extend([fandoms[i * 2 + 1], fandoms[i * 2 + 2]])
-    fandoms[7].parents.extend([fandoms[1], fandoms[2]])
-    fandoms[8].parents.append(fandoms[7])
-    fandoms[9].children.append(fandoms[6])
-
-    print('Liking Fandoms...')
-    like_user_ids = [[] for i in range(len(fandoms))]
-    for i in range(3):
-        for j in range(2 + i):
-            fandoms[i].likes.append(users[j])
-            like_user_ids[i].append(users[j].id)
-    
-    print('Adding Tags to Fandoms...')
-    fandom_tag_ids = [[] for i in range(len(fandoms))]
-    for i in range(2, 4):
-        for j in range(i + 2):
-            fandoms[i].tags.append(tags[j])
-            fandom_tag_ids[i].append(tags[j].id)
-
-    print('Committing Fandoms...')
-    db.session.commit()
-
-    print('Testing Fandoms...')
-    fandoms = Fandom.query.all()
-    assert len(fandoms) == len(fandom_names), f'Incorrect number of fandoms, expected {len(fandom_names)}, got {len(fandoms)}'
-    queried_fandom_names = [fandom.name for fandom in fandoms]
-    assert all(fandom.name in queried_fandom_names for fandom in fandoms), f'Incorrrect fandom names, expected: {fandom_names}, got: {queried_fandom_names}'
-
-    for fandom in fandoms:
-        i = fandom_names.index(fandom.name)
-        
-        # Descs
-        assert fandom.desc == fandom_descs[i], f'Incorrect Fandom Desc, expected: {fandom_descs[i]}, got: {fandom.desc}'
-        
-        # Authors
-        eans = [fandom_author_names[fandom_author_map[i][j]] for j in range(3)]
-        qans = [author.name for author in fandom.authors]
-
-        assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Invalid authors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
-
-        # Parents and Children
-        parent_ids, child_ids = fandom_hierarchy[i]
-
-        assert len(parent_ids) == len(fandom.parents),  f'Incorrect number of parents for fandom "{fandom.name}", expected {len(parent_ids)}, got {len(fandom.parents)}'
-        assert len(child_ids)  == len(fandom.children), f'Incorrect number of children for fandom "{fandom.name}", expected {len(child_ids)}, got {len(fandom.children)}'
-        
-        qpns = [parent.name for parent in fandom.parents ]
-        qcns = [child.name  for child  in fandom.children]
-
-        epns = [fandom_names[j] for j in parent_ids]
-        ecns = [fandom_names[j] for j in child_ids ]
-
-        assert all(qpn in epns for qpn in qpns) and all(epn in qpns for epn in epns), f'Invalid parents for fandom "{fandom.name}", Expected: {epns}, Got: {qpns}'
-        assert all(qcn in ecns for qcn in qcns) and all(ecn in qcns for ecn in ecns), f'Invalid children for fandom "{fandom.name}", Expected: {ecns}, Got: {qcns}'
-
-        # Ancestors and Descendents
-        ancestor_ids, descendent_ids = fandom_meta_hierarchy[i]
-
-        qans = [ancestor.name   for ancestor   in fandom.ancestors  ]
-        qdns = [descendent.name for descendent in fandom.descendents]
-
-        eans = [fandom_names[j] for j in ancestor_ids  ]
-        edns = [fandom_names[j] for j in descendent_ids]
-
-        assert all(qan in eans for qan in qans) and all(ean in qans for ean in eans), f'Invalid ancestors for fandom "{fandom.name}", Expected: {eans}, Got: {qans}'
-        assert all(qdn in edns for qdn in qdns) and all(edn in qdns for edn in edns), f'Invalid descendents for fandom "{fandom.name}", Expected: {edns}, Got: {qdns}'
-
-        # Likes
-
-        elis = like_user_ids[i]
-        qlis = [user.id for user in fandom.likes]
-
-        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Invalid likes (user ids) for fandom "{fandom.name}", Expected: {elis}, Got: {qlis}'
-
-        # Tags
-
-        etis = fandom_tag_ids[i]
-        qtis = [tag.id for tag in fandom.tags]
-
-        assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Invalid tags (tag ids) for fandom "{fandom.name}", Expected: {etis}, Got: {qtis}'
-
-    print('PASSED FANDOM CHECKS\n')
-
-    print('Creating Characters...')
-    character_names = [f'character {i}' for i in range(30)]
-    character_descs = [f'character desc {i}' for i in range(30)]
-    characters = [Character(name=character_names[i], desc=character_descs[i]) for i in range(30)]
-    
-    print('Creating and Adding Aliases...')
-    alias_names = [[] for i in range(30)]
-    for i in range(len(characters)):
-        character = characters[i]
-        aliases = [f'character alias {i}:{j}' for j in range(i * 2)]
-        alias_names[i].extend(aliases)
-        character.aliases.extend([Character_Alias(name=aliases[j]) for j in range(len(aliases))])
-
-    print('Liking Characters...')
-    character_like_user_ids = [[] for i in range(len(characters))]
-    for i in range(len(characters)):
-        character = characters[i]
-        num_likes = math.floor(random.random()*len(users))
-        user_ids = list(set([math.floor(random.random()*len(users)) for k in range(num_likes)]))
-        c_likes = [users[k] for k in user_ids]
-        character_like_user_ids[i].extend([num + 1 for num in user_ids])
-        character.likes.extend(c_likes)
-
-    print('Adding Tags to Characters')
-    character_tag_ids = [[] for i in range(30)]
-    for i in range(len(characters)):
-        character = characters[i]
-        tag_ids = list(set([math.floor(random.random()*len(tags)) for k in range(math.floor(len(tags)/2))]))
-        c_tags = [tags[k] for k in tag_ids]
-        character_tag_ids[i].extend([tag.id for tag in c_tags])
-        character.tags.extend(c_tags)
-
-    print('Adding Characters to Fandoms...')
-    character_fandom_ids = [[] for i in range(30)]
-    for i in range(len(characters)):
-        character = characters[i]
-        fandom_ids = list(set([math.floor(random.random()*len(fandoms)) for k in range(math.floor(len(fandoms)/2))]))
-        c_fandoms = [fandoms[k] for k in fandom_ids]
-        character_fandom_ids[i].extend([fandom.id for fandom in c_fandoms])
-        character.fandoms.extend(c_fandoms)
-
-    print('Committing Characters...')
-    db.session.commit()
-
-    print('Testing Characters')
-    characters = Character.query.all()
-    
-    qcns = [character.name for character in characters]
-    ecns = character_names
-
-    assert all(ecn in qcns for ecn in ecns) and all(qcn in ecns for qcn in qcns), f'Incorrect characters, Expected: {ecns}, got {qcns}'
-
-    for character in characters:
-        i = character_names.index(character.name)
-
-        assert character_descs[i] == character.desc, f'Incorrect desc in character "{character.name}", Expected: "{character_descs[i]}", Got: {character.desc}'
-        assert character.active == True, f'Character "{character.name}" isn\'t active'
-        assert len(character.edit_suggestions) == 0, f'Incorrect number of edit suggestions for character "{character.name}"'
-        
-        # aliases
-        eans = alias_names[i]
-        qans = [alias.name for alias in character.aliases]
-        
-        assert all(ean in qans for ean in eans) and all(qan in eans for qan in qans), f'Incorrect Character Aliases for character "{character.name}"'
-
-        # likes
-        elis = character_like_user_ids[i]
-        qlis = [user.id for user in character.likes]
-
-        assert all(eli in qlis for eli in elis) and all(qli in elis for qli in qlis), f'Incorrect Likes (user ids) for character "{character.name}", Expected: {elis}, Got: {qlis}'
-
-        # tags
-        etis = character_tag_ids[i]
-        qtis = [tag.id for tag in character.tags]
-
-        assert all(eti in qtis for eti in etis) and all(qti in etis for qti in qtis), f'Incorrect Character Tags for character "{character.name}"'
-
-        # fandoms
-        efis = character_fandom_ids[i]
-        qfis = [fandom.id for fandom in character.fandoms]
-
-        assert all(efi in qfis for efi in efis) and all(qfi in efis for qfi in qfis), f'Incorrect Character Fandoms for character "{character.name}", Expected: {efis}, Got: {qfis}'
-
-    print('PASSED CHARACTER CHECKS\n')
-
     print('Doing Customized Ship Identity Checks...')
 
-    ship_a = Ship(desc='ship_a desc', characters=[characters[0], characters[1], characters[2], characters[3]], platonic_pairs=[PlatonicPair(characters=[characters[0], characters[3]]), PlatonicPair(characters=[characters[1], characters[2]])])
+    char_a = Character(name='char a', desc='Character A Desc')
+    char_b = Character(name='char b', desc='Character B Desc')
+    char_c = Character(name='char c', desc='Character C Desc')
+    char_d = Character(name='char d', desc='Character D Desc')
+
+    db.session.add(char_a)
+    db.session.add(char_b)
+    db.session.add(char_c)
+    db.session.add(char_d)
+
+    db.session.commit()
+
+    ship_a = Ship(desc='ship_a desc', characters=[char_a, char_b, char_c, char_d], platonic_pairs=[PlatonicPair(characters=[char_a, char_d]), PlatonicPair(characters=[char_b, char_c])])
 
     db.session.add(ship_a)
     db.session.commit()
 
-    idn = ship_identity([characters[2], characters[3], characters[0], characters[1]], [[characters[2], characters[1]], [characters[3], characters[0]]], False)
+    idn = gen_identity([char_c, char_b, char_d, char_a], [[char_c, char_b], [char_d, char_a]], False)
 
     ship_o = Ship.query.filter_by(identity=idn).first()
     if not ship_o:
