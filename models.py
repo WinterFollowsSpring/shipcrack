@@ -282,8 +282,8 @@ class Ship(db.Model):
         return f'{char_ids}:{pair_ids}:{self.platonic}'
 
 def gen_identity(characters, platonic_pairs, platonic):
-    char_ids = [character.id for character in self.characters]
-    pair_ids = [[character.id for character in pair] for pair in self.platonic_pairs]
+    char_ids = [character.id for character in characters]
+    pair_ids = [[character.id for character in pair] for pair in platonic_pairs]
 
     char_ids.sort()
     for pair in pair_ids:
