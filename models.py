@@ -34,7 +34,7 @@ class User(db.Model, UserMixin):
 
     username = db.Column(db.Unicode(length=255), unique=True, nullable=False)
     password = db.Column(db.UnicodeText, nullable=False)
-    
+
     blurb  = db.Column(db.UnicodeText, default='')
 
     permission_level = db.Column(db.Integer, default=Permission.Standard)
@@ -147,14 +147,14 @@ class Character(db.Model):
 
     aliases = db.relationship('Character_Alias', backref='character', lazy=True)
 
-    fandoms = db.relationship('Fandom', secondary=character_fandom, lazy='subquery', 
+    fandoms = db.relationship('Fandom', secondary=character_fandom, lazy='subquery',
             backref=db.backref('characters', lazy=True))
 
-    likes = db.relationship('User', secondary=character_likes, lazy='subquery', 
+    likes = db.relationship('User', secondary=character_likes, lazy='subquery',
             backref=db.backref('character_likes', lazy=True))
 
     edit_suggestions = db.relationship('Edit_Suggestion', backref='character', lazy=True)
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -165,7 +165,7 @@ class Character_Alias(db.Model):
 
     name = db.Column(db.UnicodeText, nullable=False)
     character_id = db.Column(db.Integer, db.ForeignKey('characters.id'), nullable=False)
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -185,9 +185,9 @@ class PlatonicPair(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ship_id = db.Column(db.Integer, db.ForeignKey('ships.id'), nullable=False)
 
-    characters = db.relationship('Character', secondary=platonic_pair_characters, lazy='subquery', 
+    characters = db.relationship('Character', secondary=platonic_pair_characters, lazy='subquery',
             backref=db.backref('platonic_pairs', lazy=True))
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -212,7 +212,7 @@ class Ship(db.Model):
     desc = db.Column(db.UnicodeText, default='')
     platonic = db.Column(db.Boolean, default=False)
 
-    characters = db.relationship('Character', secondary=ship_character, lazy='subquery', 
+    characters = db.relationship('Character', secondary=ship_character, lazy='subquery',
             backref=db.backref('ships', lazy=True))
 
     platonic_pairs = db.relationship('PlatonicPair', backref='ship', lazy=True)
@@ -229,7 +229,7 @@ class Ship(db.Model):
         return list(set(fandoms))
 
     names = db.relationship('Ship_Name', backref='ship', lazy=True)
-    
+
     @property
     def sorted_names(self):
         sorted_list = self.names.copy()
@@ -262,7 +262,7 @@ class Ship(db.Model):
         return [name.name for name in self.names]
 
     likes = db.relationship('User', secondary=ship_likes, lazy='subquery', backref=db.backref('ship_likes', lazy=True))
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -276,8 +276,8 @@ class Ship(db.Model):
             pair.sort()
         pair_ids.sort()
 
-        char_ids = ','.join([f{id} for id in char_ids])
-        pair_ids = ';'.join([','.join([f{id} for id in pair]) for pair in pair_ids])
+        char_ids = ','.join([f'{id}' for id in char_ids])
+        pair_ids = ';'.join([','.join([f'{id}' for id in pair]) for pair in pair_ids])
 
         return f'{char_ids}:{pair_ids}:{self.platonic}'
 
@@ -290,8 +290,8 @@ def gen_identity(characters, platonic_pairs, platonic):
         pair.sort()
     pair_ids.sort()
 
-    char_ids = ','.join([f{id} for id in char_ids])
-    pair_ids = ';'.join([','.join([f{id} for id in pair]) for pair in pair_ids])
+    char_ids = ','.join([f'{id}' for id in char_ids])
+    pair_ids = ';'.join([','.join([f'{id}' for id in pair]) for pair in pair_ids])
 
     return f'{char_ids}:{pair_ids}:{platonic}'
 
@@ -311,7 +311,7 @@ class Ship_Name(db.Model):
 
     votes = db.relationship('User', secondary=ship_name_votes, lazy='subquery',
             backref=db.backref('ship_name_votes', lazy=True))
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -344,12 +344,12 @@ class Tag(db.Model):
     is_character_tag = db.Column(db.Boolean, default=False)
     is_ship_tag      = db.Column(db.Boolean, default=False)
 
-    fandoms = db.relationship('Fandom', secondary=fandom_tags, lazy='subquery', 
+    fandoms = db.relationship('Fandom', secondary=fandom_tags, lazy='subquery',
             backref=db.backref('tags', lazy=True))
-    characters = db.relationship('Character', secondary=character_tags, lazy='subquery', 
+    characters = db.relationship('Character', secondary=character_tags, lazy='subquery',
             backref=db.backref('tags', lazy=True))
     ships = db.relationship('Ship', secondary=ship_tags, lazy='subquery', backref=db.backref('tags', lazy=True))
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -391,7 +391,7 @@ class Suggestion(db.Model):
     __tablename__ = 'suggestions'
 
     id = db.Column(db.Integer, primary_key=True)
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
@@ -426,7 +426,7 @@ class Suggestion(db.Model):
         self.comment = comment
         self.state = Suggestion_State.Rejected
         self.item.delete()
-        
+
         return True
 
     def approve(self, comment=None):
@@ -446,13 +446,13 @@ class Edit_Suggestion(db.Model):
     __tablename__ = 'edit_suggestions'
 
     id = db.Column(db.Integer, primary_key=True)
-    
+
     def __eq__(self, other):
         return self.id == other.id
 
     reason = db.Column(db.UnicodeText, nullable=False)
     value  = db.Column(db.UnicodeText, nullable=False)
-    
+
     state      = db.Column(db.Integer, default=Suggestion_State.Pending)
     comment    = db.Column(db.UnicodeText)
     discussion = db.Column(db.UnicodeText)
@@ -506,7 +506,7 @@ class Edit_Suggestion(db.Model):
             self.item.name = self.value
         if self.action == Edit_Action.Set_Desc:
             self.item.desc = self.value
-        
+
         # all (add/del tag)
         if self.action == Edit_Action.Add_Tag:
             if self.value in [tag.name for tag in self.item.tags]:
@@ -547,27 +547,27 @@ class Edit_Suggestion(db.Model):
             new_ship_name = Ship_Name(name=self.value)
             new_ship_name.votes.append(self.user)
             self.ship.names.append(new_ship_name)
-        
+
         # character specific (add/del alias, add/del fandom)
         if self.action == Edit_Action.Add_Alias:
             if self.value in [alias.name for alias in self.character.aliases]:
                 self.state = Suggestion_State.Failed
                 self.comment = f'Alias "{self.value}" already added to character "{self.character.name}"'
                 return False
-            
+
             self.character.aliases.append(Character_Alias(name=self.value))
-        
+
         if self.action == Edit_Action.Del_Alias:
             if self.value not in [alias.name for alias in self.character.aliases]:
                 self.state = Suggestion_State.Failed
                 self.comment = f'"{self.value}" not an alias of "{self.character.name}"'
-            
+
             for i in len(range(self.character.aliases)):
                 alias = self.character[i]
                 if alias.name == self.value:
                     self.character.aliases.pop(i)
                     break
-        
+
         if self.action == Edit_Action.Add_Fandom:
             if self.value in [fandom.name for fandom in self.character.fandoms]:
                 self.state = Suggestion_State.Failed
@@ -581,7 +581,7 @@ class Edit_Suggestion(db.Model):
                 return False
 
             self.character.fandoms.append(fandom)
-        
+
         if self.action == Edit_Action.Del_Fandom:
             if self.value not in [fandom.name for fandom in self.character.fandoms]:
                 self.state = Suggestion_State.Failed
@@ -643,7 +643,7 @@ class Edit_Suggestion(db.Model):
                 self.state = Suggestion_State.Failed
                 self.comment = f'"{self.value}" is not a parent of fandom "{self.fandom.name}"'
                 return False
-            
+
             for i in range(len(self.fandom.parents)):
                 parent = self.fandom.parents[i]
                 if parent.name == self.value:
@@ -674,7 +674,7 @@ class Edit_Suggestion(db.Model):
                 self.state = Suggestion_State.Failed
                 self.comment = f'"{self.value}" is not a child of "{self.fandom.name}"'
                 return False
-            
+
             for i in range(len(self.fandom.children)):
                 child = self.fandom.children[i]
                 if child.name == self.value:
