@@ -2,13 +2,30 @@
 {% block title %} - Ships{% endblock %}
 {% block ships_active %} active" aria-current="page{% endblock %}
 
-{% block search_placeholder %}Weiss/Ruby...{% endblock %}
+{% block search_placeholder %}Yang/Blake...{% endblock %}
 
-{% block results %}
-<div class="d-flex">
-	<p class="flex-fill">Result1</p>
-	<p class="flex-fill">Result2</p>
-	<p class="flex-fill">Result3</p>
-	<p class="flex-fill">Result4</p>
+{% block result_block %}
+<div class="list-group">
+	<a href="#" class="list-group-item list-groupitem-action">
+		<div class="d-flex flex-fill justify-content-between">
+			<h5 class="mb-1">Bumbleby</h5>
+			<small>47 Likes</small>
+		</div>
+		<small>Blake Belladonna/Yang Xiao Long</small>
+	</a>
+	<a href="#" class="list-group-item list-groupitem-action">
+		<div class="d-flex flex-fill justify-content-between">
+			<h5 class="mb-1">Bees Schnees</h5>
+			<small>32 Likes</small>
+		</div>
+		<small>Blake Belladonna/Weiss Schnee/Yang Xiao Long</small>
+	</a>
+	<a href="#" class="list-group-item list-groupitem-action">
+		<div class="d-flex flex-fill justify-content-between">
+			<h5 class="mb-1">Sunnybees</h5>
+			<small>9 Likes</small>
+		</div>
+		<small>Blake Belladonna/Sun Wukong/Yang Xiao Long</small>
+	</a>
 </div>
 {% endblock %}
