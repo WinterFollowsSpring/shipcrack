@@ -6,6 +6,8 @@
 
 {% block result_block %}
 <div class="list-group">
+
+	<!-- Results Examples -->
 	<a href="#" class="list-group-item list-groupitem-action">
 		<div class="d-flex flex-fill justify-content-between">
 			<h5 class="mb-1">Bumbleby</h5>
@@ -27,5 +29,19 @@
 		</div>
 		<small>Blake Belladonna/Sun Wukong/Yang Xiao Long</small>
 	</a>
+	<!-- End Results Examples -->
+
+	<!-- Results Loop -->
+	{% for i in range(17) %}
+	<a href="#" class="list-group-item list-groupitem-action">
+		<div class="d-flex flex-fill justify-content-between">
+			<h5 class="mb-1">Highest Voted Ship Name</h5>
+			<small>9 Likes</small>
+		</div>
+		<small>Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
+	</a>
+	{% endfor %}
+	<!-- End Results Loop -->
+
 </div>
 {% endblock %}
