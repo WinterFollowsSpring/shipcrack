@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ShipCrack{% block title %}{% endblock %}</title>
+	<link rel="shortcut icon" type="image/png" href="{{url_for('static', filename='favicon.png')}}"/>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg bg-light shadow sticky-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#ships">ShipCrack</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+				<!-- Main Search Tabs -->
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link{% block ships_active %}{% endblock %}" href="#ships">Ships</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link{% block characters_active %}{% endblock %}" href="#characters">Characters</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link{% block fandoms_active %}{% endblock %}" href="#fandoms">Fandoms</a>
+					</li>
+				</ul>
+				<!-- End Main Search Tabs -->
+
+				<!-- Profile -->
+                {% block profile %}
+				<form class="d-md-flex d-flex-col" role="login">
+					<input class="form-control me-2 mb-md-0 mb-2" type="text" placeholder="Username"
+						aria-label="Username">
+					<input class="form-control me-2 mb-md-0 mb-2" type="password" placeholder="Password"
+						aria-label="Password">
+					<div class="d-flex">
+						<button class="btn btn-outline-secondary flex-fill me-2" type="submit">Login</button>
+						<button class="btn btn-outline-secondary text-nowrap" type="submit">Create Account</button>
+					</div>
+				</form>
+                {% endblock %}
+				<!-- End Profile -->
+
+			</div>
+		</div>
+	</nav>
+	<!-- End Navbar -->
+
+    {% block content %}
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>
