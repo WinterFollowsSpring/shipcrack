@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Search Page -->
+<div class="container-fluid col-lg-8 col-md-9 col-sm-10">
+	<p class="display-1 text-center mt-md-5 mt-3">ShipCrack</p>
+
+	<!-- Search Bar -->
+	<form role="search" method="POST">
+		<div class="input-group input-group-lg mb-3">
+			<input type="text" class="form-control" placeholder="{% block search_placeholder %}DEFAULT SEARCH PLACEHOLDER{% endblock %}" aria-label="Search Content"
+				aria-describedby="search-button">
+			<button class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
+		</div>
+	</form>
+	<!-- End Search Bar -->
+
+    <!-- Results -->
+    {% block results %}{% endblock %}
+    <!-- End Results -->
+
+</div>
+<!-- End Search Page -->
+{% endblock %}

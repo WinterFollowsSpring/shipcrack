@@ -1,27 +1,14 @@
-{% extends "base.html" %}
+{% extends "search_base.html" %}
 {% block title %} - Ships{% endblock %}
 {% block ships_active %} active" aria-current="page{% endblock %}
 
-{% block content %}
-<p>TESTINGTESTINGTESTING</p>
-<p>TESTINGTESTINGTESTING</p>
-<p>TESTINGTESTINGTESTING</p>
-<p>TESTINGTESTINGTESTING</p>
+{% block search_placeholder %}Weiss/Ruby...{% endblock %}
 
-<!-- Search Page -->
-<div class="container-fluid col-lg-8 col-md-9 col-sm-10">
-	<p class="display-1 text-center mt-md-5 mt-3">ShipCrack</p>
-
-	<!-- Search Bar -->
-	<form role="search" method="POST">
-		<div class="input-group input-group-lg mb-3">
-			<input type="text" class="form-control" placeholder="Blake/Yang..." aria-label="Search Content"
-				aria-describedby="search-button">
-			<button class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
-		</div>
-	</form>
-	<!-- End Search Bar -->
-
+{% block results %}
+<div class="d-flex">
+	<p class="flex-fill">Result1</p>
+	<p class="flex-fill">Result2</p>
+	<p class="flex-fill">Result3</p>
+	<p class="flex-fill">Result4</p>
 </div>
-<!-- End Search Page -->
 {% endblock %}
