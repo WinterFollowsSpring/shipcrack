@@ -34,14 +34,15 @@
 	<!-- Results Loop -->
 	{% for i in range(17) %}
 	<a href="#" class="list-group-item list-group-item-action">
-		<div class="d-flex flex-fill justify-content-between">
-			<h5 class="mb-1">Highest Voted Ship Name</h5>
+		<div class="d-flex justify-content-between">
+			<div class="flex-fill">
+				<h5 class="mb-1">Highest Voted Ship Name</h5>
+				<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
+			</div>
 			<div class="align-self-stretch bg-secondary">
 				<img src="{{url_for('static', filename='heart.svg')}}" width="32" height="32"/>
 			</div>
-			<!--<small>9 Likes</small>-->
 		</div>
-		<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
 	</a>
 	{% endfor %}
 	<!-- End Results Loop -->
