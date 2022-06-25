@@ -5,40 +5,6 @@
 {% block search_placeholder %}Yang/Blake...{% endblock %}
 
 {% block result_block %}
-<ul class="list-group">
-	<li class="list-group-item">
-		<div class="d-flex justify-content-between">
-
-			<a href="#ship" role="button" class="flex-fill btn btn-outline-primary border-0 text-start me-1">
-				<h5 class="mb-1">Bumbleby</h5>
-				<small class="text-muted">Blake Belladonna/Yang Xiao Long</small>
-			</a>
-
-			<a href="#like" role="button" class="btn btn-outline-primary border-0">
-				<small>47 Likes</small>
-			</a>
-
-		</div>
-	</li>
-
-	<li class="list-group-item">
-		<div class="d-flex justify-content-between">
-
-			<a href="#ship" role="button" class="flex-fill btn btn-outline-primary border-0 text-start me-1">
-				<h5 class="mb-1">Bees Schnees</h5>
-				<small class="text-muted">Blake Belladonna/Weiss Schnee/Yang Xiao Long</small>
-			</a>
-
-			<a href="#like" role="button" class="btn btn-outline-primary border-0">
-				<small>32 Likes</small>
-			</a>
-
-		</div>
-	</li>
-
-</ul>
-
-
 <div class="list-group">
 
 	<!-- Results Examples -->
@@ -47,21 +13,21 @@
 			<h5 class="mb-1">Bumbleby</h5>
 			<small>47 Likes</small>
 		</div>
-		<small>Blake Belladonna/Yang Xiao Long</small>
+		<small class="text-muted">Blake Belladonna/Yang Xiao Long</small>
 	</a>
 	<a href="#" class="list-group-item list-group-item-action">
 		<div class="d-flex flex-fill justify-content-between">
 			<h5 class="mb-1">Bees Schnees</h5>
 			<small>32 Likes</small>
 		</div>
-		<small>Blake Belladonna/Weiss Schnee/Yang Xiao Long</small>
+		<small class="text-muted">Blake Belladonna/Weiss Schnee/Yang Xiao Long</small>
 	</a>
 	<a href="#" class="list-group-item list-group-item-action">
 		<div class="d-flex flex-fill justify-content-between">
 			<h5 class="mb-1">Sunnybees</h5>
 			<small>9 Likes</small>
 		</div>
-		<small>Blake Belladonna/Sun Wukong/Yang Xiao Long</small>
+		<small class="text-muted">Blake Belladonna/Sun Wukong/Yang Xiao Long</small>
 	</a>
 	<!-- End Results Examples -->
 
@@ -72,7 +38,7 @@
 			<h5 class="mb-1">Highest Voted Ship Name</h5>
 			<small>9 Likes</small>
 		</div>
-		<small class="text-secondary">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
+		<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
 	</a>
 	{% endfor %}
 	<!-- End Results Loop -->
