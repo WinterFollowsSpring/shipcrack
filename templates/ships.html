@@ -40,7 +40,7 @@
 				<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
 			</div>
 			<div class="align-self-stretch d-flex align-items-center">
-				<img src="{{url_for('static', filename='heart.svg')}}" onclick="console.log('test');" style="position:relative;z-index:1;" width="48" height="48"/>
+				<img src="{{url_for('static', filename='heart.svg')}}" onclick="window.location.href = '{{url_for('login')}}';" style="position:relative;z-index:1;" width="48" height="48"/>
 			</div>
 		</div>
 	</a>
