@@ -33,7 +33,7 @@
 
 	<!-- Results Loop -->
 	{% for i in range(17) %}
-	<a href="https://google.com" class="list-group-item list-group-item-action">
+	<div onclick="window.location.href = 'https://google.com';" class="list-group-item list-group-item-action">
 		<div class="d-flex justify-content-between">
 			<div class="flex-fill">
 				<h5 class="mb-1">Highest Voted Ship Name</h5>
@@ -43,7 +43,7 @@
 				<img src="{{url_for('static', filename='heart.svg')}}" onclick="event.stopPropagation();window.location.href = 'https://shipcrack.com/login';" width="48" height="48"/>
 			</div>
 		</div>
-	</a>
+	</div>
 	{% endfor %}
 	<!-- End Results Loop -->
 
