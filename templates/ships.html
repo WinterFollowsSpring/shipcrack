@@ -11,6 +11,8 @@
 	}
 
 	.SC__heart {
+		background-image: url("{{url_for('static', 'heart.svg')}}");
+		background-size: 48px;
 		filter: invert(96%) sepia(22%) saturate(1%) hue-rotate(168deg) brightness(103%) contrast(60%);
 	}
 
@@ -60,7 +62,10 @@
 				<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
 			</div>
 			<div class="align-self-stretch d-flex align-items-center">
-				<img class="SC__heart" src="{{url_for('static', filename='heart.svg')}}" onclick="event.stopPropagation();window.location.href = 'https://shipcrack.com/login';" width="48" height="48"/>
+				<div class="SC__heart" onclick="event.stopPropagation();window.location.href='https://shipcrack.com/login';">
+					<p>420</p>
+				</div>
+				<!--<img class="SC__heart" src="{{url_for('static', filename='heart.svg')}}" onclick="event.stopPropagation();window.location.href = 'https://shipcrack.com/login';" width="48" height="48"/>-->
 			</div>
 		</div>
 	</div>
