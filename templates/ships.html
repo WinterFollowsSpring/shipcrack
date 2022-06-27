@@ -4,6 +4,14 @@
 
 {% block search_placeholder %}Yang/Blake...{% endblock %}
 
+{% block style_block %}
+<style>
+	.teamSelector {
+		cursor: pointer;
+	}
+</style>
+{% endblock %}
+
 {% block result_block %}
 <div class="list-group">
 
@@ -33,7 +41,7 @@
 
 	<!-- Results Loop -->
 	{% for i in range(17) %}
-	<div onclick="window.location.href = 'https://google.com';" class="list-group-item list-group-item-action">
+	<div onclick="window.location.href = 'https://google.com';" class="list-group-item list-group-item-action teamSelector">
 		<div class="d-flex justify-content-between">
 			<div class="flex-fill">
 				<h5 class="mb-1">Highest Voted Ship Name</h5>
