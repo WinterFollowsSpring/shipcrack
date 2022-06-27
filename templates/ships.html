@@ -9,6 +9,18 @@
 	.teamSelector {
 		cursor: pointer;
 	}
+
+	.SC__heart {
+		filter: invert(96%) sepia(22%) saturate(1%) hue-rotate(168deg) brightness(103%) contrast(60%);
+	}
+
+	.SC__heart:hover {
+		filter: invert(97%) sepia(0%) saturate(0%) hue-rotate(168deg) brightness(91%) contrast(95%);
+	}
+
+	.SC__heart:active {
+		filter: invert(100%) sepia(68%) saturate(799%) hue-rotate(225deg) brightness(122%) contrast(87%);
+	}
 </style>
 {% endblock %}
 
@@ -48,7 +60,7 @@
 				<small class="text-muted">Character 1/Character 2/Character 3/... (Character 1 & Character 2, ...)</small>
 			</div>
 			<div class="align-self-stretch d-flex align-items-center">
-				<img src="{{url_for('static', filename='heart.svg')}}" onclick="event.stopPropagation();window.location.href = 'https://shipcrack.com/login';" width="48" height="48"/>
+				<img class="SC__heart" src="{{url_for('static', filename='heart.svg')}}" onclick="event.stopPropagation();window.location.href = 'https://shipcrack.com/login';" width="48" height="48"/>
 			</div>
 		</div>
 	</div>
